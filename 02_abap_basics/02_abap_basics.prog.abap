@@ -46,10 +46,11 @@ INITIALIZATION.
         lt_rets        TYPE TABLE OF bapiret2,
         ls_ret         TYPE bapiret2.
 
-  lt_address = VALUE #( ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '9' )
+lt_address = VALUE #( ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '9' )
                         ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '11' ) ).
-
-  MOVE-CORRESPONDING lt_address TO lt_address2.
+INSERT VALUE ltys_address( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '13' ) INTO TABLE lt_address.
+MOVE-CORRESPONDING lt_address TO lt_address2.
+l_num = COND #( WHEN p_birth = sy-datum THEN 1 ELSE p_op1 ).
 
 *Input-Prüfung
 AT SELECTION-SCREEN.
