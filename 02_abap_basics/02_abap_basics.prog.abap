@@ -34,6 +34,8 @@ INITIALIZATION.
   DATA: l_msg(20)      VALUE 'l_msg',
         l_num          TYPE i,
         l_num2         TYPE string,
+        r_datum        TYPE date,
+        i_datum        TYPE char10 VALUE '2023-02-23',
         r_calculator   TYPE REF TO zcl_mini_calc,
         x_myexception  TYPE REF TO cx_sy_zerodivide,
         ls_address     TYPE ltys_address,
@@ -51,6 +53,8 @@ lt_address = VALUE #( ( city = 'Würzburg' zipcode = '97070' country = 'Germany'
 INSERT VALUE ltys_address( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '13' ) INTO TABLE lt_address.
 MOVE-CORRESPONDING lt_address TO lt_address2.
 l_num = COND #( WHEN p_birth = sy-datum THEN 1 ELSE p_op1 ).
+r_datum = |{ i_datum+0(4) }{ i_datum+5(2) }{ i_datum+8(2) }|.
+REPLACE ALL OCCURRENCES OF '-' IN i_datum WITH ''.
 
 *Input-Prüfung
 AT SELECTION-SCREEN.
