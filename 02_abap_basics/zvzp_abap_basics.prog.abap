@@ -3,11 +3,12 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT 02_ABAP_BASICS.
+REPORT zvzp_abap_basics.
 
 INITIALIZATION.
 *Parameterdeklaration in separaten SELECTION-SCREEN-Blöcken
   SELECTION-SCREEN BEGIN OF BLOCK 0 WITH FRAME TITLE TEXT-006.
+    SELECTION-SCREEN SKIP.
     PARAMETERS: p_name(12),
                 p_birth    TYPE d DEFAULT sy-datum,
                 p_carid    TYPE sflight-carrid,
@@ -15,10 +16,15 @@ INITIALIZATION.
                 p_op2      TYPE i,
                 p_oper.
   SELECTION-SCREEN END OF BLOCK 0.
+  SELECTION-SCREEN SKIP.
 
   SELECTION-SCREEN BEGIN OF BLOCK 1 WITH FRAME TITLE TEXT-007.
-    PARAMETERS: p_sel RADIOBUTTON GROUP r1,
-                p_fm  RADIOBUTTON GROUP r1.
+    SELECTION-SCREEN SKIP.
+    PARAMETERS: p_sel  RADIOBUTTON GROUP r1 DEFAULT 'X',
+                p_fm   RADIOBUTTON GROUP r1,
+                p_test AS CHECKBOX DEFAULT space.
+*    SELECT-OPTIONS: so_vkont FOR fkkvkp-vkont OBLIGATORY,
+*                so_gpart FOR fkkvkp-gpart.
   SELECTION-SCREEN END OF BLOCK 1.
 
 *Typdeklaration
@@ -48,13 +54,13 @@ INITIALIZATION.
         lt_rets        TYPE TABLE OF bapiret2,
         ls_ret         TYPE bapiret2.
 
-lt_address = VALUE #( ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '9' )
+  lt_address = VALUE #( ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '9' )
                         ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '11' ) ).
-INSERT VALUE ltys_address( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '13' ) INTO TABLE lt_address.
-MOVE-CORRESPONDING lt_address TO lt_address2.
-l_num = COND #( WHEN p_birth = sy-datum THEN 1 ELSE p_op1 ).
-r_datum = |{ i_datum+0(4) }{ i_datum+5(2) }{ i_datum+8(2) }|.
-REPLACE ALL OCCURRENCES OF '-' IN i_datum WITH ''.
+  INSERT VALUE ltys_address( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '13' ) INTO TABLE lt_address.
+  MOVE-CORRESPONDING lt_address TO lt_address2.
+  l_num = COND #( WHEN p_birth = sy-datum THEN 1 ELSE p_op1 ).
+  r_datum = |{ i_datum+0(4) }{ i_datum+5(2) }{ i_datum+8(2) }|.
+  REPLACE ALL OCCURRENCES OF '-' IN i_datum WITH ''.
 
 *Input-Prüfung
 AT SELECTION-SCREEN.
@@ -74,7 +80,9 @@ START-OF-SELECTION.
   WRITE: / 'Das ist dein Name in Zeile 5: ', p_name,
          / 'Das ist dein Geburtsdatum: ', p_birth HOTSPOT,
          / p_carid, ' ', icon_list AS ICON HOTSPOT,
-         / l_msg COLOR COL_NEGATIVE.
+         / l_msg COLOR COL_NEGATIVE,
+         / r_datum,
+         / i_datum.
 
 *Tabellenbearbeitung
   LOOP AT lt_address2 INTO ls_address WHERE number = '11'.
@@ -182,8 +190,9 @@ START-OF-SELECTION.
   IF l_num = 0.
     EXIT.
   ELSE.
+    SKIP TO LINE 27.
     WRITE: / 'Tabelle mit ', l_num, 'Zeilen.', / '->', 'einfache Anzeige' COLOR COL_NORMAL.
-    SKIP TO LINE 28.
+    SKIP TO LINE 30.
     WRITE: / '->', 'ALV-Anzeige' COLOR COL_NORMAL HOTSPOT, icon_list AS ICON HOTSPOT.
   ENDIF.
 
@@ -193,7 +202,7 @@ AT LINE-SELECTION.
     sy-lsind = 0.
   ENDIF.
   CASE sy-lilli.
-    WHEN 26.
+    WHEN 28.
       IF p_sel = 'X'.
         LOOP AT lt_flights INTO ls_flight.
           WRITE: / ls_flight-carrid, ls_flight-connid, ls_flight-fldate.
@@ -203,7 +212,7 @@ AT LINE-SELECTION.
           WRITE: / ls_bapisfldat-airlineid, ls_bapisfldat-connectid, ls_bapisfldat-flightdate.
         ENDLOOP.
       ENDIF.
-    WHEN 28.
+    WHEN 30.
       IF p_sel = 'X'.
         CALL FUNCTION 'REUSE_ALV_LIST_DISPLAY'
           EXPORTING
