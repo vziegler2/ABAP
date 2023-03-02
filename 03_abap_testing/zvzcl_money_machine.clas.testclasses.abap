@@ -1,4 +1,4 @@
-CLASS ltcl_get_amount_in_coins DEFINITION FINAL FOR TESTING
+CLASS ltcl_get_amount DEFINITION FINAL FOR TESTING
   DURATION SHORT
   RISK LEVEL HARMLESS.
 
@@ -7,8 +7,8 @@ CLASS ltcl_get_amount_in_coins DEFINITION FINAL FOR TESTING
 
     METHODS: setup,
       assert_convert
-        IMPORTING i_coin  TYPE i
-                  i_input TYPE i,
+        IMPORTING i_return TYPE i
+                  i_input  TYPE i,
       assert_error
         IMPORTING i_input TYPE i,
       verify FOR TESTING RAISING cx_static_check,
@@ -16,14 +16,14 @@ CLASS ltcl_get_amount_in_coins DEFINITION FINAL FOR TESTING
 ENDCLASS.
 
 
-CLASS ltcl_get_amount_in_coins IMPLEMENTATION.
+CLASS ltcl_get_amount IMPLEMENTATION.
 
   METHOD setup.
     CREATE OBJECT m_cut.
   ENDMETHOD.
 
   METHOD assert_convert.
-    cl_abap_unit_assert=>assert_equals( exp = i_coin
+    cl_abap_unit_assert=>assert_equals( exp = i_return
                                         act = m_cut->get_amount_in_coins( i_input ) ).
   ENDMETHOD.
 
@@ -33,8 +33,9 @@ CLASS ltcl_get_amount_in_coins IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD verify.
-    assert_convert( i_coin = 1 i_input = 1 ).
-    assert_convert( i_coin = 2 i_input = 2 ).
+    assert_convert( i_return = 1 i_input = 1 ).
+    assert_convert( i_return = 2 i_input = 2 ).
+    assert_convert( i_return = 4 i_input = 29 ).
   ENDMETHOD.
 
   METHOD error_cases.
