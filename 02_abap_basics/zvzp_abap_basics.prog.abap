@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*& Report 02_ABAP_BASICS
+*& Report zvzp_abap_basics
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
@@ -61,18 +61,24 @@ INITIALIZATION.
   lt_address = VALUE #( ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '9' )
                         ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '11' ) ).
   INSERT VALUE ltys_address( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '13' ) INTO TABLE lt_address.
+  DATA(lt_address3) = VALUE ltys_address( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '15' ).
+  APPEND lt_address3 TO lt_address.
   MOVE-CORRESPONDING lt_address TO lt_address2.
   l_num = COND #( WHEN p_birth = sy-datum THEN 1 ELSE p_op1 ).
   r_datum = |{ i_datum+0(4) }{ i_datum+5(2) }{ i_datum+8(2) }|.
   REPLACE ALL OCCURRENCES OF '-' IN i_datum WITH ''.
   ASSIGN l_num TO <field_symbol>.
+  SELECT * FROM spfli INTO TABLE @DATA(it_spfli).
   GET TIME STAMP FIELD lv_time. "Alternativ TIMESTAMPL als TYPE möglich (L für long)
 *Konvertierung mit CONVERT TIME STAMP gv_time_stamp TIME ZONE gv_timezone -> F1-Hilfe
 
-  LOOP AT lt_address2 ASSIGNING <field_symbol2>.
-    <field_symbol2>-city = 'Hamburg'.
+*Falls das Field-Symbol schon deklariert ist, ist nur ASSIGNING nötig.
+*IF-Statement ist nötig, weil bei fehlerhaftem ASSIGN das Programm abstürzt.
+  LOOP AT lt_address2 ASSIGNING FIELD-SYMBOL(<field_symbol3>).
+    IF sy-subrc = 0.
+      <field_symbol3>-city = 'Hamburg'.
+    ENDIF.
   ENDLOOP.
-
 *Input-Prüfung---------------------------------------------------------------------------------------------------------------------
 *TYPE: A = Abbruch, E = Fehler, I = Info, S = Status, W = Warn, (X = Exit -> Dump, sollte nicht verwendet werden)
 *Message-Werte sind in SY-MSGID, SY-MSGTY, SY-MSGNO, SY-MSGV1, SY-MSGV2, SY-MSGV3, SY-MSGV4 gespeichert
