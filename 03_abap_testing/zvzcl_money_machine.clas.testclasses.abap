@@ -6,7 +6,10 @@ CLASS ltcl_get_amount DEFINITION FINAL FOR TESTING
     DATA: m_cut TYPE REF TO zvzcl_money_machine.
 
     METHODS: setup,
-      assert_convert
+      assert_convert_coins
+        IMPORTING i_return TYPE i
+                  i_input  TYPE i,
+      assert_convert_notes
         IMPORTING i_return TYPE i
                   i_input  TYPE i,
       assert_error
@@ -19,12 +22,17 @@ ENDCLASS.
 CLASS ltcl_get_amount IMPLEMENTATION.
 
   METHOD setup.
-    CREATE OBJECT m_cut.
+    m_cut = NEW #(  ).
   ENDMETHOD.
 
-  METHOD assert_convert.
+  METHOD assert_convert_coins.
     cl_abap_unit_assert=>assert_equals( exp = i_return
                                         act = m_cut->get_amount_in_coins( i_input ) ).
+  ENDMETHOD.
+
+  METHOD assert_convert_notes.
+    cl_abap_unit_assert=>assert_equals( exp = i_return
+                                        act = m_cut->get_amount_in_notes( i_input ) ).
   ENDMETHOD.
 
   METHOD assert_error.
@@ -33,9 +41,11 @@ CLASS ltcl_get_amount IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD verify.
-    assert_convert( i_return = 1 i_input = 1 ).
-    assert_convert( i_return = 2 i_input = 2 ).
-    assert_convert( i_return = 4 i_input = 29 ).
+    assert_convert_coins( i_return = 1 i_input = 1 ).
+    assert_convert_coins( i_return = 2 i_input = 2 ).
+    assert_convert_coins( i_return = 4 i_input = 29 ).
+    assert_convert_notes( i_return = 0 i_input = 4 ).
+    assert_convert_notes( i_return = 25 i_input = 29 ).
   ENDMETHOD.
 
   METHOD error_cases.

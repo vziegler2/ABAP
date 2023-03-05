@@ -1,8 +1,3 @@
-*&---------------------------------------------------------------------*
-*& Report zvzp_abap_basics
-*&---------------------------------------------------------------------*
-*&
-*&---------------------------------------------------------------------*
 REPORT zvzp_abap_basics.
 
 INITIALIZATION.
@@ -27,6 +22,15 @@ INITIALIZATION.
 *                so_gpart FOR fkkvkp-gpart.
   SELECTION-SCREEN END OF BLOCK 1.
 
+**AUTHORITY-CHECK-------------------------------------------------------------------------------------------
+*AT SELECTION-SCREEN.
+*  AUTHORITY-CHECK OBJECT 'Berechtigungsobjekt'
+*    ID 'Berechtigungsfeld' FIELD 'Wert'
+*    ID 'ACTVT' FIELD '03'.
+*  IF sy-subrc <> 0.
+*    MESSAGE 'No authorization' TYPE 'E'.
+*  ENDIF.
+
 *Typdeklaration--------------------------------------------------------------------------------------------------------------------
   TYPES: BEGIN OF ltys_address,
            city(40),
@@ -42,8 +46,6 @@ INITIALIZATION.
         l_num2         TYPE string,
         r_datum        TYPE date,
         i_datum        TYPE char10 VALUE '2023-02-23',
-        r_calculator   TYPE REF TO zcl_mini_calc,
-        x_myexception  TYPE REF TO cx_sy_zerodivide,
         ls_address     TYPE ltys_address,
         lt_address     TYPE TABLE OF ltys_address,
         lt_address2    TYPE TABLE OF ltys_address,
@@ -61,14 +63,17 @@ INITIALIZATION.
   lt_address = VALUE #( ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '9' )
                         ( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '11' ) ).
   INSERT VALUE ltys_address( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '13' ) INTO TABLE lt_address.
-  DATA(lt_address3) = VALUE ltys_address( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '15' ).
-  APPEND lt_address3 TO lt_address.
+  APPEND VALUE #( city = 'Würzburg' zipcode = '97070' country = 'Germany' street = 'Zwinger' number = '15' ) TO lt_address.
   MOVE-CORRESPONDING lt_address TO lt_address2.
-  l_num = COND #( WHEN p_birth = sy-datum THEN 1 ELSE p_op1 ).
+  SORT lt_address BY city ASCENDING number DESCENDING.
   r_datum = |{ i_datum+0(4) }{ i_datum+5(2) }{ i_datum+8(2) }|.
   REPLACE ALL OCCURRENCES OF '-' IN i_datum WITH ''.
+  l_num = COND #( WHEN p_birth = sy-datum THEN 1 ELSE p_op1 ).
+  l_num = line_index( lt_address[ number = 15 ] ).
   ASSIGN l_num TO <field_symbol>.
   SELECT * FROM spfli INTO TABLE @DATA(it_spfli).
+*INTO CORRESPONDING FIELDS OF TABLE möglich, falls Tabelle schon definiert ist
+*APPENDING TABLE möglich, falls Tabelle schon befüllt ist
   GET TIME STAMP FIELD lv_time. "Alternativ TIMESTAMPL als TYPE möglich (L für long)
 *Konvertierung mit CONVERT TIME STAMP gv_time_stamp TIME ZONE gv_timezone -> F1-Hilfe
 
@@ -104,7 +109,7 @@ START-OF-SELECTION.
          / r_datum,
          / i_datum,
          / lv_time,
-         / <field_symbol>.
+         / 'Der gesuchte Wert befindet sich in Zeile: ', <field_symbol>.
 
 *Tabellenbearbeitung---------------------------------------------------------------------------------------------------------------
   LOOP AT lt_address2 INTO ls_address WHERE number = '11'.
@@ -151,9 +156,10 @@ START-OF-SELECTION.
 
 *Klassen-Methode aufrufen----------------------------------------------------------------------------------------------------------
   TRY.
-      CREATE OBJECT r_calculator.
+      DATA(lo_calculator) = NEW zcl_mini_calc( ).
+      DATA(x_myexception) = NEW cx_sy_zerodivide(  ).
 
-      CALL METHOD r_calculator->calculate
+      CALL METHOD lo_calculator->calculate
         EXPORTING
           im_op1    = p_op1
           im_oper   = p_oper
@@ -257,7 +263,7 @@ AT LINE-SELECTION.
   ENDCASE.
 
 
-*SELECT mit JOIN über drei Tabellen------------------------------------------------------------------------------------------------
+**SELECT mit JOIN über drei Tabellen------------------------------------------------------------------------------------------------
 *  SELECT a~partner a~type
 *         b~vkont b~vkbez b~loevm
 *         c~vertrag c~bukrs c~sparte
