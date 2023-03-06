@@ -43,7 +43,7 @@ INITIALIZATION.
 *Variablendeklaration und -initialisierung-----------------------------------------------------------------------------------------
   DATA: l_msg(20)      VALUE 'l_msg',
         l_num          TYPE i,
-        l_num2         TYPE string,
+        l_num2         TYPE string VALUE 'String 2',
         r_datum        TYPE date,
         i_datum        TYPE char10 VALUE '2023-02-23',
         ls_address     TYPE ltys_address,
@@ -109,7 +109,10 @@ START-OF-SELECTION.
          / r_datum,
          / i_datum,
          / lv_time,
-         / 'Der gesuchte Wert befindet sich in Zeile: ', <field_symbol>.
+         / 'Der gesuchte Wert befindet sich in Zeile: ', <field_symbol>,
+         / |String 1, | && |2 + 3 = { 2 + 3 }, | && |\n{ l_num2 }|.
+  cl_demo_output=>write( |String 1, | && |2 + 3 = { 2 + 3 }, | && |\n{ l_num2 }| ).
+  cl_demo_output=>display( |String 1, | && |2 + 3 = { 2 + 3 }, | && |\n{ l_num2 }| ).
 
 *Tabellenbearbeitung---------------------------------------------------------------------------------------------------------------
   LOOP AT lt_address2 INTO ls_address WHERE number = '11'.
@@ -120,7 +123,8 @@ START-OF-SELECTION.
            ls_address-number.
   ENDLOOP.
 
-  DESCRIBE TABLE lt_address2 LINES l_num.
+*  DESCRIBE TABLE lt_address2 LINES l_num.
+  l_num2 = lines( lt_address ).
   WRITE: / 'Anzahl der Tabellenzeilen: ', l_num.
 *READ lt_address2 INTO ls_address ...
 *MODIFY TABLE lt_address2 FROM ls_address ...
@@ -156,17 +160,23 @@ START-OF-SELECTION.
 
 *Klassen-Methode aufrufen----------------------------------------------------------------------------------------------------------
   TRY.
-      DATA(lo_calculator) = NEW zcl_mini_calc( ).
+*      DATA(lo_calculator) = NEW zcl_mini_calc( ).
       DATA(x_myexception) = NEW cx_sy_zerodivide(  ).
 
-      CALL METHOD lo_calculator->calculate
-        EXPORTING
-          im_op1    = p_op1
-          im_oper   = p_oper
-          im_op2    = p_op2
-        IMPORTING
-          ex_result = l_num2.
-      WRITE: / 'Klassen-Methode: ', l_num2, '(String)'.
+*      CALL METHOD lo_calculator->calculate
+*        EXPORTING
+*          im_op1    = p_op1
+*          im_oper   = p_oper
+*          im_op2    = p_op2
+*        IMPORTING
+*          ex_result = l_num2.
+**      l_num2 = NEW zcl_mini_calc(  )->calculate( i_op1 = p_op1
+**                                                 i_opr = p_oper
+**                                                 i_op2 = p_op2 ).
+*      WRITE: / 'Klassen-Methode: ', l_num2, '(String)'.
+      WRITE: / 'Klassen-Methode: ', NEW zcl_mini_calc(  )->calculate( i_op1 = p_op1
+                                                                      i_opr = p_oper
+                                                                      i_op2 = p_op2 ), '(String)'.
 
     CATCH cx_sy_zerodivide INTO x_myexception.
       l_num2 = x_myexception->get_text( ).
@@ -218,9 +228,9 @@ START-OF-SELECTION.
   IF l_num = 0.
     EXIT.
   ELSE.
-    SKIP TO LINE 29.
-    WRITE: / 'Tabelle mit ', l_num, 'Zeilen.', / '->', 'einfache Anzeige' COLOR COL_NORMAL.
     SKIP TO LINE 31.
+    WRITE: / 'Tabelle mit ', l_num, 'Zeilen.', / '->', 'einfache Anzeige' COLOR COL_NORMAL.
+    SKIP TO LINE 34.
     WRITE: / '->', 'ALV-Anzeige' COLOR COL_NORMAL HOTSPOT, icon_list AS ICON HOTSPOT.
   ENDIF.
 
@@ -230,7 +240,7 @@ AT LINE-SELECTION.
     sy-lsind = 0.
   ENDIF.
   CASE sy-lilli.
-    WHEN 30.
+    WHEN 32.
       IF p_sel = 'X'.
         LOOP AT lt_flights INTO ls_flight.
           WRITE: / ls_flight-carrid, ls_flight-connid, ls_flight-fldate.
@@ -240,7 +250,7 @@ AT LINE-SELECTION.
           WRITE: / ls_bapisfldat-airlineid, ls_bapisfldat-connectid, ls_bapisfldat-flightdate.
         ENDLOOP.
       ENDIF.
-    WHEN 31.
+    WHEN 34.
       IF p_sel = 'X'.
         CALL FUNCTION 'REUSE_ALV_LIST_DISPLAY'
           EXPORTING
