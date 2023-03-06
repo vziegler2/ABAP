@@ -9,6 +9,9 @@ CLASS zvzcl_fizzbuzz DEFINITION
       RAISING   zvzx_000.
   PROTECTED SECTION.
   PRIVATE SECTION.
+    CONSTANTS: gc_fizz TYPE string VALUE 'Fizz',
+               gc_buzz TYPE string VALUE 'Buzz',
+               gc_fibu TYPE string VALUE 'FizzBuzz'.
 ENDCLASS.
 
 
@@ -24,11 +27,11 @@ CLASS zvzcl_fizzbuzz IMPLEMENTATION.
     WHILE i_iter <= 100.
       lv_output = i_iter.
       IF i_iter MOD 5 = 0 AND i_iter MOD 3 = 0.
-        WRITE: 'FizzBuzz', /.
+        WRITE: gc_fibu, /.
       ELSEIF i_iter MOD 3 = 0.
-        WRITE: 'Fizz', /.
+        WRITE: gc_fizz, /.
       ELSEIF i_iter MOD 5 = 0.
-        WRITE: 'Buzz', /.
+        WRITE: gc_buzz, /.
       ELSE.
         WRITE: lv_output, /.
       ENDIF.
