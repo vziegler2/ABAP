@@ -6,5 +6,5 @@ TRY.
 
     CALL METHOD lo_fizz->lm_fizzbuzz( 0 ).
   CATCH zvzx_000 INTO lo_exc.
-    lo_exc->lm_exc(  ).
+    lo_exc->lm_exc( 'Bitte eine Zahl zwischen 1 und 100 wählen' ).
 ENDTRY.

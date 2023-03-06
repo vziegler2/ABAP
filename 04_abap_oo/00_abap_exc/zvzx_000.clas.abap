@@ -4,7 +4,7 @@ CLASS zvzx_000 DEFINITION INHERITING FROM cx_no_check
   CREATE PUBLIC .
 
   PUBLIC SECTION.
-    METHODS lm_exc.
+    METHODS lm_exc IMPORTING i_input TYPE string.
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -14,7 +14,7 @@ ENDCLASS.
 CLASS zvzx_000 IMPLEMENTATION.
 
   METHOD lm_exc.
-    MESSAGE ID '00' TYPE 'E' NUMBER '001' WITH 'Bitte eine Zahl zwischen 1 und 100 eingeben!'.
+    MESSAGE ID '00' TYPE 'E' NUMBER '001' WITH i_input.
     EXIT.
   ENDMETHOD.
 
