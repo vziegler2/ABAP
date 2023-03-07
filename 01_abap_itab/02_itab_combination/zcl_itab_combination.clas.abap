@@ -42,9 +42,9 @@ ENDCLASS.
 CLASS zcl_itab_combination IMPLEMENTATION.
 
   METHOD perform_combination.
-    combined_data = value #( for ls_alpha in alphas ( colx = |{ ls_alpha-cola }{ nums[ sy-tabix ]-col1 }|
-                                                      coly = |{ ls_alpha-colb }{ nums[ sy-tabix ]-col2 }|
-                                                      colz = |{ ls_alpha-colc }{ nums[ sy-tabix ]-col3 }| ) ).
+    combined_data = VALUE #( FOR ls_alpha IN alphas INDEX INTO lv_index ( colx = |{ ls_alpha-cola }{ nums[ lv_index ]-col1 }|
+                                                                          coly = |{ ls_alpha-colb }{ nums[ lv_index ]-col2 }|
+                                                                          colz = |{ ls_alpha-colc }{ nums[ lv_index ]-col3 }| ) ).
   ENDMETHOD.
 
 ENDCLASS.
