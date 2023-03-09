@@ -6,7 +6,7 @@ CLASS zvzcl_fizzbuzz DEFINITION
   PUBLIC SECTION.
     METHODS lm_fizzbuzz
       IMPORTING i_input TYPE i
-      RAISING   zvzx_000.
+      RAISING   zvzx_000. "Klassische Alternative EXCEPTIONS
   PROTECTED SECTION.
   PRIVATE SECTION.
     CONSTANTS: gc_fizz TYPE string VALUE 'Fizz',
@@ -39,7 +39,7 @@ CLASS zvzcl_fizzbuzz IMPLEMENTATION.
     ENDWHILE.
 
     IF i_input > 100 OR i_input < 1.
-      RAISE EXCEPTION TYPE zvzx_000.
+      RAISE EXCEPTION TYPE zvzx_000. "Klassische Alternative RAISE
     ENDIF.
   ENDMETHOD.
 ENDCLASS.
