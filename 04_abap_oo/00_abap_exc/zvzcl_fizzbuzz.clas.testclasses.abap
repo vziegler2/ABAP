@@ -21,7 +21,7 @@ CLASS ltcl_get_amount IMPLEMENTATION.
         m_cut->lm_fizzbuzz( i_input = 101 ).
       CATCH zvzx_000.
     ENDTRY.
-*m_cut->lm_fizzbuzz( i_input = 101 EXCEPTIONS <exception_name> ).
+*m_cut->lm_fizzbuzz( i_input = 101 EXCEPTIONS <exception_name> = x ).
 *cl_abap_unit_assert=>assert_subrc( exp = 4 ).
   ENDMETHOD.
 
