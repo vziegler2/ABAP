@@ -19,6 +19,7 @@ CLASS ltcl_get_amount IMPLEMENTATION.
   METHOD error_cases.
     TRY.
         m_cut->lm_fizzbuzz( i_input = 101 ).
+*cl_abap_unit_assert=>fail( msg = 'Fail' ).
       CATCH zvzx_000.
     ENDTRY.
 *m_cut->lm_fizzbuzz( i_input = 101 EXCEPTIONS <exception_name> = x ).
