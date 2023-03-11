@@ -43,7 +43,7 @@ INITIALIZATION.
 *Variablendeklaration und -initialisierung-----------------------------------------------------------------------------------------
   DATA: l_msg(20)      VALUE 'l_msg',
         l_num          TYPE i,
-        l_num2         TYPE string VALUE 'String 2',
+        l_num2         TYPE string VALUE 'white',
         r_datum        TYPE date,
         i_datum        TYPE char10 VALUE '2023-02-23',
         ls_address     TYPE ltys_address,
@@ -84,6 +84,18 @@ INITIALIZATION.
       <field_symbol3>-city = 'Hamburg'.
     ENDIF.
   ENDLOOP.
+
+  l_num = SWITCH #( l_num2
+      WHEN 'black' THEN 0
+      WHEN 'brown' THEN 1
+      WHEN 'red' THEN 2
+      WHEN 'orange' THEN 3
+      WHEN 'yellow' THEN 4
+      WHEN 'green' THEN 5
+      WHEN 'blue' THEN 6
+      WHEN 'violet' THEN 7
+      WHEN 'grey' THEN 8
+      WHEN 'white' THEN 9).
 *Input-Prüfung---------------------------------------------------------------------------------------------------------------------
 *TYPE: A = Abbruch, E = Fehler, I = Info, S = Status, W = Warn, (X = Exit -> Dump, sollte nicht verwendet werden)
 *Message-Werte sind in SY-MSGID, SY-MSGTY, SY-MSGNO, SY-MSGV1, SY-MSGV2, SY-MSGV3, SY-MSGV4 gespeichert
