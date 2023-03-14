@@ -4,6 +4,7 @@ CLASS zvzcl_airplane DEFINITION
   CREATE PUBLIC .
 
   PUBLIC SECTION.
+    INTERFACES: zvzif_airplane, zvzif_airplaneconnid.
     DATA: gv_carrier_id TYPE s_carr_id READ-ONLY.
     CONSTANTS: gc_carrid_lufthansa TYPE s_carr_id VALUE 'LH'.
     METHODS: constructor IMPORTING iv_windows TYPE i
@@ -69,6 +70,20 @@ CLASS zvzcl_airplane IMPLEMENTATION.
     DATA: lv_windows LIKE gv_windows.
     lv_windows = iv_windows_basic + 4.
     set_windows( EXPORTING iv_windows = lv_windows ).
+  ENDMETHOD.
+
+  METHOD zvzif_airplane~set_engine_type.
+    zvzif_airplane~gv_engine_type = iv_engine_type.
+  ENDMETHOD.
+
+  METHOD zvzif_airplaneconnid~determine_conn_id.
+    DATA: lv_conn_id LIKE zvzif_airplaneconnid~gv_conn_id.
+    SELECT SINGLE connid FROM spfli INTO lv_conn_id WHERE carrid = gc_carrid_lufthansa.
+    zvzif_airplaneconnid~set_conn_id( lv_conn_id ).
+  ENDMETHOD.
+
+  METHOD zvzif_airplaneconnid~set_conn_id.
+    zvzif_airplaneconnid~gv_conn_id = iv_conn_id.
   ENDMETHOD.
 
 ENDCLASS.
