@@ -13,13 +13,15 @@ INITIALIZATION.
   SELECTION-SCREEN END OF BLOCK 0.
   SELECTION-SCREEN SKIP.
 
+TABLES: fkkvkp.
+
   SELECTION-SCREEN BEGIN OF BLOCK 1 WITH FRAME TITLE TEXT-007.
     SELECTION-SCREEN SKIP.
     PARAMETERS: p_sel  RADIOBUTTON GROUP r1 DEFAULT 'X',
                 p_fm   RADIOBUTTON GROUP r1,
                 p_test AS CHECKBOX DEFAULT space.
-*    SELECT-OPTIONS: so_vkont FOR fkkvkp-vkont OBLIGATORY,
-*                so_gpart FOR fkkvkp-gpart.
+    SELECT-OPTIONS: so_vkont FOR fkkvkp-vkont OBLIGATORY,
+                    so_gpart FOR fkkvkp-gpart.
   SELECTION-SCREEN END OF BLOCK 1.
 
 **AUTHORITY-CHECK-------------------------------------------------------------------------------------------
@@ -109,7 +111,7 @@ AT SELECTION-SCREEN.
 *I = Fenster, S/E = links unten, W/A/X = Dynpro
 *RAISING kann angehängt werden, um Methoden/Funktionsbausteine aufzurufen
   MESSAGE ID '00' TYPE 'I' NUMBER 001 WITH 'Ihr Benutzer: ' sy-uname.
-  MESSAGE 'Programm gestartet.' TYPE 'I'.
+  MESSAGE 'Programm gestartet.' TYPE 'I' DISPLAY LIKE 'S'.
 
 *Formatierter Output---------------------------------------------------------------------------------------------------------------
 START-OF-SELECTION.
