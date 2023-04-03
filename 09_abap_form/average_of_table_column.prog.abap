@@ -52,3 +52,11 @@ FORM f_average_table_field
   r_result = lv_sum / lv_lines.
 
 ENDFORM.
+
+*Spaltensumme eines Feldes einer internen Tabelle mit REDUCE berechnen
+*
+*SELECT * FROM spfli INTO TABLE @DATA(it_spfli).
+*
+*DATA(lv_fltime_sum) = REDUCE spfli-fltime( INIT s = 0
+*                                           FOR <l> IN it_spfli
+*                                           NEXT s = s + <l>-fltime ).
