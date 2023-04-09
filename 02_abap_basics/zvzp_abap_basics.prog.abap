@@ -57,7 +57,8 @@ TABLES: fkkvkp.
         ls_bapisfldat  TYPE bapisfldat,
         lt_rets        TYPE TABLE OF bapiret2,
         ls_ret         TYPE bapiret2,
-        lv_time        TYPE timestamp.
+        lv_time        TYPE timestamp,
+        chkbox         TYPE c1.
 
   FIELD-SYMBOLS: <field_symbol>,
                  <field_symbol2> TYPE ltys_address.
@@ -124,7 +125,11 @@ START-OF-SELECTION.
          / i_datum,
          / lv_time,
          / 'Der gesuchte Wert befindet sich in Zeile: ', <field_symbol>,
-         / |String 1, | && |2 + 3 = { 2 + 3 }, | && |\n{ l_num2 }|.
+         / |String 1, | && |2 + 3 = { 2 + 3 }, | && |\n{ l_num2 }|,
+         / chkbox AS CHECKBOX, 'Auswahl'.
+  IF chkbox = 'X'.
+    DATA(checked) = 'checked'.
+  ENDIF.
   cl_demo_output=>write( |String 1, | && |2 + 3 = { 2 + 3 }, | && |\n{ l_num2 }| ).
   cl_demo_output=>display( |String 1, | && |2 + 3 = { 2 + 3 }, | && |\n{ l_num2 }| ).
 
