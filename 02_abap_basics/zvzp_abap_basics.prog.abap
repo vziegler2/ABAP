@@ -44,6 +44,7 @@ TABLES: fkkvkp.
 
 *Variablendeklaration und -initialisierung-----------------------------------------------------------------------------------------
   DATA: l_msg(20)      VALUE 'l_msg',
+        gv_numc(10)    TYPE n VALUE '12345',
         l_num          TYPE i,
         l_num2         TYPE string VALUE 'white',
         r_datum        TYPE date,
@@ -58,7 +59,14 @@ TABLES: fkkvkp.
         lt_rets        TYPE TABLE OF bapiret2,
         ls_ret         TYPE bapiret2,
         lv_time        TYPE timestamp,
-        chkbox         TYPE c1.
+        chkbox         TYPE c1,
+        gv_erg3        TYPE p DECIMALS 2.
+
+  DATA(gv_erg) = 7 DIV 2.
+  DATA(gv_erg2) = 7 MOD 2.
+  gv_erg3 = 7 ** 2.
+
+  CONSTANTS: gc_pi TYPE p DECIMALS 2 VALUE '3.14'.
 
   FIELD-SYMBOLS: <field_symbol>,
                  <field_symbol2> TYPE ltys_address.
@@ -99,6 +107,27 @@ TABLES: fkkvkp.
       WHEN 'violet' THEN 7
       WHEN 'grey' THEN 8
       WHEN 'white' THEN 9).
+
+  CONCATENATE gv_numc l_num2 INTO DATA(gv_string) SEPARATED BY ' '.
+
+  FIND 'null' IN gv_string.
+  IF sy-subrc = 0.
+    WRITE: / 'Gefunden'.
+  ENDIF.
+
+  REPLACE ALL OCCURRENCES OF 'white' IN gv_string WITH 'black'.
+  IF sy-subrc = 0.
+    WRITE: / gv_string.
+  ENDIF.
+
+  SPLIT gv_string AT ' ' INTO DATA(gv_1) DATA(gv_2).
+  IF sy-subrc = 0.
+    WRITE: / gv_1, /, gv_2.
+  ENDIF.
+
+  DATA: gv_verdichtung TYPE string VALUE ' das ist  ein Verdichtungstext '.  
+  CONDENSE gv_verdichtung. "NO-GAPS
+  TRANSLATE gv_verdichtung TO UPPER CASE. "TO LOWER CASE
 *Input-Prüfung---------------------------------------------------------------------------------------------------------------------
 *TYPE: A = Abbruch, E = Fehler, I = Info, S = Status, W = Warn, (X = Exit -> Dump, sollte nicht verwendet werden)
 *Message-Werte sind in SY-MSGID, SY-MSGTY, SY-MSGNO, SY-MSGV1, SY-MSGV2, SY-MSGV3, SY-MSGV4 gespeichert
@@ -117,6 +146,7 @@ AT SELECTION-SCREEN.
 *Formatierter Output---------------------------------------------------------------------------------------------------------------
 START-OF-SELECTION.
   SKIP TO LINE 5.
+  ULINE.
   WRITE: / 'Das ist dein Name in Zeile 5: ', p_name,
          / 'Das ist dein Geburtsdatum: ', p_birth HOTSPOT,
          / p_carid, ' ', icon_list AS ICON HOTSPOT,

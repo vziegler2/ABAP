@@ -90,3 +90,7 @@ REPORT zvzp_templates.
 *ORDER BY entries DESCENDING, price
 *INTO TABLE @DATA(it_tab)
 *UP TO 200 ROWS.
+**** (Kommentar)
+*****************************************************************
+** ${cursor}
+*****************************************************************
