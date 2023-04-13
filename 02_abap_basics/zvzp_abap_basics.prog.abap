@@ -113,6 +113,12 @@ DATA: it_st     TYPE STANDARD TABLE OF ty_long WITH DEFAULT KEY,
     ENDIF.
   ENDLOOP.
 
+  DO 5 TIMES.
+    CHECK lv_i <= 100. "Falls lv_i > 100 wird der Schleifendurchlauf beendet.
+    lv_i += 1.
+  ENDDO.
+  CHECK lv_i <= 100. "Falls lv_i > 100 wird der aktuelle Verarbeitungsblock beendet.
+
   CASE p_alter.
     WHEN 6.
       WRITE: / '6'.
@@ -231,6 +237,7 @@ START-OF-SELECTION.
 
 *Funktionsbaustein aufrufen--------------------------------------------------------------------------------------------------------
   CALL FUNCTION 'MINI_CALC'
+*   TABLES
     EXPORTING
       operand1         = p_op1
       operand2         = p_op2
@@ -384,5 +391,8 @@ AT LINE-SELECTION.
 *    AND   c~vertrag IN so_vertr
 *    AND   b~loevm <> 'X'
 *    AND   c~loevm <> 'X'.
+*
+*SELECT SINGLE * FROM sflight INTO (var1, var2, ...)
+*SELECT SINGLE * FROM sflight INTO CORRESPONDING FIELDS OF <struct>/<table>
 
   INCLUDE zvz_inc_form_14_program.
