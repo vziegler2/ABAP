@@ -42,6 +42,23 @@ TABLES: fkkvkp.
            number(5)   TYPE n,
          END OF ltys_address.
 
+*Tabellentypen---------------------------------------------------------------------------------------------------------------------
+
+TYPES: BEGIN OF ty_long,
+         posnr   TYPE posnr,
+         matnr   TYPE matnr,
+         vbeln   TYPE vbeln,
+         flag_ok TYPE boolean,
+       END OF ty_long.
+
+DATA: it_st     TYPE STANDARD TABLE OF ty_long WITH DEFAULT KEY,
+      it_so     TYPE SORTED TABLE OF ty_long WITH UNIQUE KEY posnr WITH NON-UNIQUE SORTED KEY flag COMPONENTS flag_ok,
+      it_sorted TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line,
+      it_hadk   TYPE HASHED TABLE OF ty_long WITH UNIQUE DEFAULT KEY,
+      it_hauk   TYPE HASHED TABLE OF ty_long WITH UNIQUE KEY posnr,
+      it_hask   TYPE HASHED TABLE OF ty_long WITH UNIQUE DEFAULT KEY WITH NON-UNIQUE SORTED KEY flag COMPONENTS flag_ok,
+      it_hauksk TYPE HASHED TABLE OF ty_long WITH UNIQUE KEY posnr matnr vbeln WITH NON-UNIQUE SORTED KEY flag COMPONENTS flag_ok.
+
 *Variablendeklaration und -initialisierung-----------------------------------------------------------------------------------------
   DATA: l_msg(20)      VALUE 'l_msg',
         gv_numc(10)    TYPE n VALUE '12345',
@@ -96,6 +113,15 @@ TABLES: fkkvkp.
     ENDIF.
   ENDLOOP.
 
+  CASE p_alter.
+    WHEN 6.
+      WRITE: / '6'.
+    WHEN 7 OR 8.
+      WRITE: / '7 oder 8'.
+    WHEN OTHERS.
+      WRITE: / 'Anderes'.
+  ENDCASE.
+
   l_num = SWITCH #( l_num2
       WHEN 'black' THEN 0
       WHEN 'brown' THEN 1
@@ -128,6 +154,28 @@ TABLES: fkkvkp.
   DATA: gv_verdichtung TYPE string VALUE ' das ist  ein Verdichtungstext '.  
   CONDENSE gv_verdichtung. "NO-GAPS
   TRANSLATE gv_verdichtung TO UPPER CASE. "TO LOWER CASE
+
+  INSERT gs_mitarbeiter INTO TABLE gt_mitarbeiter.
+  INSERT gs_mitarbeiter INTO gt_mitarbeiter INDEX 1.
+  
+  READ TABLE gt_mitarbeiter INDEX 2 INTO gs_mitarbeiter.
+  READ TABLE gt_mitarbeiter2 WITH TABLE KEY pernr = 1 INTO gs_mitarbeiter.
+  READ TABLE gt_mitarbeiter WITH KEY name = 'Peter' INTO gs_mitarbeiter.
+  
+  MODIFY TABLE gt_mitarbeiter FROM gs_mitarbeiter. "Wenn Primärschlüssel vorhanden.
+  MODIFY gt_mitarbeiter FROM gs_mitarbeiter INDEX 2.
+  
+  DELETE TABLE gt_mitarbeiter FROM gs_mitarbeiter. "Sucht Zeile auf Basis des Primärschlüssel.
+  DELETE gt_mitarbeiter INDEX 2.
+  
+  INSERT LINES OF gt_mitarbeiter2 FROM 1 TO 2 INTO TABLE gt_mitarbeiter.
+  
+  LOOP AT gt_mitarbeiter ASSIGNING FIELD-SYMBOL(<f>) WHERE pernr = 1.
+    WRITE: / <f>-pernr.
+  ENDLOOP.
+  
+  SORT gt_mitarbeiter BY name ASCENDING. "Nicht für sortierte Tabellen möglich.
+
 *Input-Prüfung---------------------------------------------------------------------------------------------------------------------
 *TYPE: A = Abbruch, E = Fehler, I = Info, S = Status, W = Warn, (X = Exit -> Dump, sollte nicht verwendet werden)
 *Message-Werte sind in SY-MSGID, SY-MSGTY, SY-MSGNO, SY-MSGV1, SY-MSGV2, SY-MSGV3, SY-MSGV4 gespeichert
