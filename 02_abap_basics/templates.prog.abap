@@ -10,9 +10,9 @@ REPORT zvzp_templates.
 *  ${cursor}.
 *ENDLOOP.
 **types (Struktur- und Tabellentyp)
-*TYPES: BEGIN OF ls_${struct_name},
+*TYPES: BEGIN OF ty_${struct_name},
 *         ${cursor},
-*       END OF ls_${struct_name},
+*       END OF ty_${struct_name},
 *       tt_${struct_name} TYPE STANDARD TABLE OF ls_${struct_name} WITH DEFAULT KEY.
 **lcl (Local class)
 *CLASS lcl_${class_name} DEFINITION.
@@ -46,6 +46,13 @@ REPORT zvzp_templates.
 *      CHANGING
 *        t_table      = ${table_name} ).
 *
+**   o_events = o_salv->get_event(  ).
+**    SET HANDLER lcl_events=>on_double_click FOR o_events.
+**    SET HANDLER lcl_events=>on_link_click FOR o_events.
+*
+**    DATA(o_col) = CAST cl_salv_column_table( o_salv->get_columns(  )->get_column( '${link_column}' ) ).
+**    o_col->set_cell_type( if_salv_c_cell_type=>hotspot ).
+*
 *    o_salv->get_functions(  )->set_all( abap_true ).
 *    o_salv->get_display_settings(  )->set_list_header( '${header}' ).
 *    o_salv->get_display_settings(  )->set_striped_pattern( abap_true ).
@@ -53,8 +60,8 @@ REPORT zvzp_templates.
 *    o_salv->get_sorts(  )->add_sort( columnname = '${sort_column}' sequence = if_salv_c_sort=>sort_up ).
 *    o_salv->get_columns(  )->set_optimize( abap_true ).
 *    LOOP AT o_salv->get_columns(  )->get(  ) ASSIGNING FIELD-SYMBOL(<c>).
-*      DATA(o_col) = <c>-r_column.
-*      o_col->set_alignment( if_salv_c_alignment=>centered ).
+*      DATA(o_col2) = <c>-r_column.
+*      o_col2->set_alignment( if_salv_c_alignment=>centered ).
 *    ENDLOOP.
 *    o_salv->display(  ).
 *  CATCH cx_root INTO DATA(e_txt).
