@@ -46,7 +46,7 @@ REPORT zvzp_templates.
 *      CHANGING
 *        t_table      = ${table_name} ).
 *
-**   o_events = o_salv->get_event(  ).
+**	o_events = o_salv->get_event(  ).
 **    SET HANDLER lcl_events=>on_double_click FOR o_events.
 **    SET HANDLER lcl_events=>on_link_click FOR o_events.
 *
@@ -64,7 +64,7 @@ REPORT zvzp_templates.
 *      o_col2->set_alignment( if_salv_c_alignment=>centered ).
 *    ENDLOOP.
 *    o_salv->display(  ).
-*  CATCH cx_root INTO DATA(e_txt).
+*  CATCH cx_salv_msg cx_salv_data_error cx_salv_existing cx_salv_not_found INTO DATA(e_txt).
 *    WRITE: / e_txt->get_text(  ).
 *ENDTRY.
 **cld (cl_demo_output in Vollbilddarstellung)
@@ -101,3 +101,15 @@ REPORT zvzp_templates.
 *****************************************************************
 ** ${cursor}
 *****************************************************************
+**selopt (Select-Options)
+*SELECTION-SCREEN BEGIN OF BLOCK $${bl0} WITH FRAME TITLE $${TEXT-000}.
+*  SELECT-OPTIONS: so_$${name} FOR $${table-variable}.$${cursor}
+*SELECTION-SCREEN END OF BLOCK $${bl0}.
+*
+*TYPES: BEGIN OF ty_selopts,
+*         ${name} TYPE RANGE OF $${table-variable},
+*       END OF ty_selopts.
+*
+*DATA: ls_selopts TYPE ty_selopts.
+*
+*ls_selopts-$${name}[] = so_$${name}[].
