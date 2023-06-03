@@ -1,8 +1,9 @@
 REPORT zvzp_templates.
 **ifs (IF mit sy-subrc)
-*IF sy-subrc = 0.
-*  ${cursor}
-*ENDIF.
+*IF sy-subrc <> 0.
+*    MESSAGE ID '00' TYPE 'I' NUMBER 001 WITH 'Objekt ist gesperrt'.
+*    RETURN.
+*ENDIF.${cursor}
 **wwri (WRITE)
 *WRITE: / ${cursor}.
 **loop (Einfacher Loop in Feldsymbol)
@@ -113,3 +114,28 @@ REPORT zvzp_templates.
 *DATA: ls_selopts TYPE ty_selopts.
 *
 *ls_selopts-$${name}[] = so_$${name}[].
+**form (FORM-Routine)
+*PERFORM ${name}.
+*"TABLES .
+*"USING .
+*"CHANGING .
+*
+*FORM ${name}.
+*"TABLES .
+*"USING .
+*"CHANGING .
+*ENDFORM.${cursor}
+**header (Header-Informationen)
+****************************************************************
+* Jira..............: ${jira}
+* Description.......: ${description}
+* Functional Concept: Vikram Ziegler (Academic Work)
+* Technical Concept.: Vikram Ziegler (Academic Work)
+* Realized by.......: Vikram Ziegler (Academic Work)
+*---------------------------------------------------------------
+* Change History:
+*---------------------------------------------------------------
+* Realized by.......:
+* Date..............:
+* Where.............:
+****************************************************************
