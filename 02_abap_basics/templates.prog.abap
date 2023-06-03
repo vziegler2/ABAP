@@ -81,6 +81,10 @@ REPORT zvzp_templates.
 *WRITE: / space.
 **sql (SQL-Statement)
 *SELECT price,
+*       CASE price
+*         WHEN '50' THEN '50'
+*         ELSE '50'
+*       END AS price50,
 *       COUNT( DISTINCT fldate ) AS flight_dates,
 *       COUNT( * ) AS entries,
 *       MIN( price ) AS min,
