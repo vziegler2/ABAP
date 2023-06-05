@@ -5,16 +5,16 @@ REPORT zvzp_templates.
 *    RETURN.
 *ENDIF.${cursor}
 **wwri (WRITE)
-*WRITE: / ${cursor}.
+*WRITE: /, ${cursor}.
 **loop (Einfacher Loop in Feldsymbol)
 *LOOP AT ${table_name} ASSIGNING FIELD-SYMBOL(<${field_symbol}>).
 *  ${cursor}.
 *ENDLOOP.
 **types (Struktur- und Tabellentyp)
-*TYPES: BEGIN OF ty_${struct_name},
+*TYPES: BEGIN OF gty_${struct_name},
 *         ${cursor},
-*       END OF ty_${struct_name},
-*       tt_${struct_name} TYPE STANDARD TABLE OF ls_${struct_name} WITH DEFAULT KEY.
+*       END OF gty_${struct_name},
+*       gty_${struct_name}_t TYPE STANDARD TABLE OF gty_${struct_name} WITH DEFAULT KEY.
 **lcl (Local class)
 *CLASS lcl_${class_name} DEFINITION.
 *  PUBLIC SECTION.

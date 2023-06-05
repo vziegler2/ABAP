@@ -1,0 +1,8 @@
+FUNCTION-POOL ZMKRTEST_APPL01_SCR.          "MESSAGE-ID ..
+
+* INCLUDE LZMKRTEST_APPL01_SCRD...           " Local class definition
+
+TABLES: ZDP_MX_S_2.
+
+DATA: go_view TYPE REF TO ZCL_MKRTEST_APPL01.
+DATA: gv_okcode TYPE syucomm.
