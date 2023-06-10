@@ -10,7 +10,7 @@ MODULE status_0100 OUTPUT.
   SET PF-STATUS 'STANDARD'.
   SET TITLEBAR 'TITLEBAR_0100'.
 
-  IF c_custom_container IS INITIAL.
+  IF c_custom_container IS NOT BOUND.
 ****************************************************************
 * Container, Splitter und ALVs erzeugen
 ****************************************************************
@@ -55,6 +55,8 @@ MODULE status_0100 OUTPUT.
                                                     it_fieldcatalog = lt_fieldcat ).
 
     SET HANDLER lcl_event_handle=>handle_double_click FOR alv_grid.
-
+  ELSE.
+    alv_grid->refresh_table_display( is_stable = VALUE #( row = abap_true col = abap_true ) ).
+    alv_grid2->refresh_table_display( is_stable = VALUE #( row = abap_true col = abap_true ) ).
   ENDIF.
 ENDMODULE.

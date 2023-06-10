@@ -1,16 +1,15 @@
 *----------------------------------------------------------------------*
-***INCLUDE Z00_USER_COMMAND_0100I01.
+***INCLUDE Z00_USER_COMMAND_0200I01.
 *----------------------------------------------------------------------*
 *&---------------------------------------------------------------------*
-*&      Module  USER_COMMAND_0100  INPUT
+*&      Module  USER_COMMAND_0200  INPUT
 *&---------------------------------------------------------------------*
 *       text
 *----------------------------------------------------------------------*
-MODULE user_command_0100 INPUT.
+MODULE user_command_0200 INPUT.
   CASE sy-ucomm.
-    WHEN '&F15' OR '&F12'.
-      LEAVE PROGRAM.
-    WHEN '&F03'.
-      CALL SELECTION-SCREEN '1000'.
+    WHEN '&ONT' OR '&AC1'.
+      LEAVE TO SCREEN 0.
+    WHEN OTHERS.
   ENDCASE.
 ENDMODULE.

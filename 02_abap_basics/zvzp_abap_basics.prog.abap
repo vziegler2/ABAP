@@ -51,6 +51,12 @@ TYPES: BEGIN OF ty_long,
          flag_ok TYPE boolean,
        END OF ty_long.
 
+TYPES: BEGIN OF gty_outtab.
+       INCLUDE STRUCTURE draw.
+TYPES: color TYPE lvc_t_scol,
+       END OF gty_outtab,
+       gty_outtab_t TYPE STANDARD TABLE OF gty_outtab WITH EMPTY KEY.
+
 DATA: it_st     TYPE STANDARD TABLE OF ty_long WITH DEFAULT KEY,
       it_so     TYPE SORTED TABLE OF ty_long WITH UNIQUE KEY posnr WITH NON-UNIQUE SORTED KEY flag COMPONENTS flag_ok,
       it_sorted TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line,

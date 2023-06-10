@@ -15,14 +15,17 @@ CLASS zcl_cvvz_dynpro DEFINITION
 
       get_data1,
       pbo_0001,
-      pai_0001 FOR EVENT user_command OF cl_gui_alv_grid IMPORTING e_ucomm.
+      popup_pbo_0001,
+      pai_0001 FOR EVENT user_command OF cl_gui_alv_grid IMPORTING e_ucomm,
+      popup_pai_0001 IMPORTING iv_okcode TYPE syucomm.
 
   PRIVATE SECTION.
     TYPES: gty_tt_data1 TYPE TABLE OF zdp_mx_s_1,
            gty_tt_data2 TYPE TABLE OF zdp_mx_s_2.
 
     CONSTANTS: gc_struc1 TYPE tabname VALUE 'ZDP_MX_S_1',
-               gc_struc2 TYPE tabname VALUE 'ZDP_MX_S_2'.
+               gc_struc2 TYPE tabname VALUE 'ZDP_MX_S_2',
+               gc_struc3 TYPE tabname VALUE 'MCHB'.
 
     DATA: gr_matnr TYPE rsdsselopt_t,
           gr_mtart TYPE rsdsselopt_t,
@@ -31,11 +34,13 @@ CLASS zcl_cvvz_dynpro DEFINITION
           gt_data2 TYPE gty_tt_data2,
           gt_data3 TYPE mchb_tty,
           go_cont  TYPE REF TO cl_gui_docking_container,
+          go_cont_popup TYPE REF TO cl_gui_custom_container,
           go_grid2 TYPE REF TO cl_gui_alv_grid.
 
     METHODS: create_controls,
              get_fc1              RETURNING VALUE(rt_fc) TYPE lvc_t_fcat,
              get_fc2              RETURNING VALUE(rt_fc) TYPE lvc_t_fcat,
+             get_fc3              RETURNING VALUE(rt_fc) TYPE lvc_t_fcat,
              handle_double_click1 FOR EVENT double_click OF cl_gui_alv_grid IMPORTING e_row,
 
       get_data2 IMPORTING iv_matnr TYPE matnr
@@ -120,6 +125,38 @@ CLASS zcl_cvvz_dynpro IMPLEMENTATION.
     SET PF-STATUS 'TITLEBAR' OF PROGRAM 'ZCVVZ_DYNPRO_OO'.
 
     create_controls( ).
+  ENDMETHOD.
+
+  METHOD popup_pbo_0001.
+  DATA: ls_layout  TYPE lvc_s_layo,
+        ls_variant TYPE disvariant.
+
+    SET PF-STATUS '0001' OF PROGRAM 'SAPLZMKRTEST_APPL01_SCR'.
+    SET TITLEBAR '0001' OF PROGRAM 'SAPLZMKRTEST_APPL01_SCR'.
+
+    IF go_cont_popup IS NOT BOUND.
+    go_cont_popup = NEW #( container_name = 'CUST_CONTAINER' ).
+
+    DATA(go_grid3) = NEW cl_gui_alv_grid( i_parent = go_cont_popup ).
+
+      ls_layout-grid_title = 'titel popup alv'.
+      ls_layout-zebra      = abap_true.
+      ls_layout-sel_mode   = 'B'.
+      ls_layout-cwidth_opt = abap_true.
+      ls_variant-report    = sy-calld.
+      ls_variant-handle   = '0003'.
+      DATA(lt_fcat) = get_fc3( ).
+
+      go_grid3->set_table_for_first_display( EXPORTING i_bypassing_buffer   = abap_true
+                                                       is_layout            = ls_layout
+                                                       is_variant           = ls_variant
+                                                       i_save               = 'A'
+                                                       i_default            = abap_true
+                                             CHANGING it_outtab            = gt_data3
+                                                      it_fieldcatalog      = lt_fcat ).
+    ELSE.
+      go_grid3->refresh_table_display( is_stable = VALUE #( row = abap_true col = abap_true ) ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD create_controls.
@@ -270,12 +307,46 @@ CLASS zcl_cvvz_dynpro IMPLEMENTATION.
     ENDLOOP.
   ENDMETHOD.
 
+  METHOD get_fc3.
+    CALL FUNCTION 'LVC_FIELDCATALOG_MERGE'
+      EXPORTING
+        i_structure_name = gc_struc3
+      CHANGING
+        ct_fieldcat      = rt_fc
+      EXCEPTIONS
+        OTHERS           = 0.
+    LOOP AT rt_fc ASSIGNING FIELD-SYMBOL(<ls_fc>).
+      CASE <ls_fc>-fieldname.
+        WHEN 'MATNR' OR 'CHARG' OR 'CLABS' OR 'CSPEM'.
+*          <ls_fc>-icon        = abap_true.
+*          <ls_fc>-hotspot     = abap_true.
+*        WHEN 'SCAN_2ND_RFID' OR 'KTEXTLOS' OR 'LOSMENGE' OR 'MENGENEINH'.
+*        WHEN 'SAMPLERIDENT'.
+*          <ls_fc>-coltext     = text-008.
+*          <ls_fc>-scrtext_l   = text-008.
+*          <ls_fc>-scrtext_m   = text-008.
+*          <ls_fc>-scrtext_s   = text-008.
+        WHEN OTHERS.
+          <ls_fc>-no_out      = abap_true.
+          <ls_fc>-tech        = abap_true.
+      ENDCASE.
+    ENDLOOP.
+  ENDMETHOD.
+
   METHOD pai_0001.
     CASE sy-ucomm.
       WHEN '&F15' OR '&F12'.
         LEAVE PROGRAM.
       WHEN '&F03'.
-        "CALL SELECTION-SCREEN '1000'.
+        LEAVE TO SCREEN 0.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD popup_pai_0001.
+    CASE sy-ucomm.
+      WHEN '&F15' OR '&F12' OR '&F03'.
+        LEAVE TO SCREEN 0.
+      WHEN OTHERS.
     ENDCASE.
   ENDMETHOD.
 

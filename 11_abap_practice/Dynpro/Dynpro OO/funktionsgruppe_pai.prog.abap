@@ -1,16 +1,11 @@
 *----------------------------------------------------------------------*
-***INCLUDE Z00_USER_COMMAND_0100I01.
+***INCLUDE LZMKRTEST_APPL01_SCRI01.
 *----------------------------------------------------------------------*
 *&---------------------------------------------------------------------*
-*&      Module  USER_COMMAND_0100  INPUT
+*&      Module  PAI_0001  INPUT
 *&---------------------------------------------------------------------*
 *       text
 *----------------------------------------------------------------------*
-MODULE user_command_0100 INPUT.
-  CASE sy-ucomm.
-    WHEN '&F15' OR '&F12'.
-      LEAVE PROGRAM.
-    WHEN '&F03'.
-      CALL SELECTION-SCREEN '1000'.
-  ENDCASE.
+MODULE pai_0001 INPUT.
+  go_view->popup_pai_0001( gv_okcode ).
 ENDMODULE.

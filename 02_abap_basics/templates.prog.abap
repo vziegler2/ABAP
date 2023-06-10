@@ -40,33 +40,42 @@ REPORT zvzp_templates.
 *ENDCLASS.
 **salv (SALV-Tabelle mit Grundeinstellungen)
 *TRY.
-*    DATA: o_salv TYPE REF TO cl_salv_table.
-*    CALL METHOD cl_salv_table=>factory(
-*      IMPORTING
-*        r_salv_table = o_salv
-*      CHANGING
-*        t_table      = ${table_name} ).
+*    DATA: go_salv TYPE REF TO cl_salv_table.
+*    cl_salv_table=>factory( EXPORTING r_container  = cl_gui_container=>default_screen
+*							IMPORTING r_salv_table = go_salv
+*      						CHANGING  t_table      = ${table_name} ).
 *
-**	o_events = o_salv->get_event(  ).
-**    SET HANDLER lcl_events=>on_double_click FOR o_events.
-**    SET HANDLER lcl_events=>on_link_click FOR o_events.
+**      DATA(go_column) = CAST cl_salv_column_table( go_salv->get_columns( )->get_column( 'DOKST' ) ).               "Ganze Spalte zu Buttons machen
+**      go_column->set_icon( if_salv_c_bool_sap=>true ).
+**      go_column->set_cell_type( if_salv_c_cell_type=>button ).
+**      SET HANDLER lcl_events=>on_link_click FOR go_salv->get_event( ).
 *
-**    DATA(o_col) = CAST cl_salv_column_table( o_salv->get_columns(  )->get_column( '${link_column}' ) ).
+**    SET HANDLER lcl_events=>on_toolbar_click FOR go_salv->get_event( ).											"Toolbutton hinzufügen
+**    DATA(o_col) = CAST cl_salv_column_table( go_salv->get_columns(  )->get_column( '${link_column}' ) ).
 **    o_col->set_cell_type( if_salv_c_cell_type=>hotspot ).
 *
-*    o_salv->get_functions(  )->set_all( abap_true ).
-*    o_salv->get_display_settings(  )->set_list_header( '${header}' ).
-*    o_salv->get_display_settings(  )->set_striped_pattern( abap_true ).
-*    o_salv->get_selections(  )->set_selection_mode( if_salv_c_selection_mode=>row_column ).
-*    o_salv->get_sorts(  )->add_sort( columnname = '${sort_column}' sequence = if_salv_c_sort=>sort_up ).
-*    o_salv->get_columns(  )->set_optimize( abap_true ).
-*    LOOP AT o_salv->get_columns(  )->get(  ) ASSIGNING FIELD-SYMBOL(<c>).
+*    go_salv->get_functions(  )->set_all( abap_true ).
+**    go_salv->get_functions( )->add_function( name     = |EXPORT|
+**                                             icon     = |{ icon_ws_plane }|
+**                                             text     = |Export|
+**                                             tooltip  = |Daten exportieren|
+**                                             position = if_salv_c_function_position=>right_of_salv_functions ).
+*    go_salv->get_display_settings(  )->set_list_header( '${header}' ).
+*    go_salv->get_display_settings(  )->set_striped_pattern( abap_true ).
+*    go_salv->get_selections(  )->set_selection_mode( if_salv_c_selection_mode=>row_column ).
+*    go_salv->get_sorts(  )->add_sort( columnname = '${sort_column}' sequence = if_salv_c_sort=>sort_up ).
+*    go_salv->get_columns(  )->set_optimize( abap_true ).
+**    DATA(o_col) = CAST cl_salv_column_table( go_salv->get_columns(  )->get_column( 'DOKST' ) ). 					"Spalte färben
+**    o_col->set_color( VALUE #( col = 5 int = 0 inv = 0 ) ).
+**    go_salv->get_columns(  )->set_color_column( 'COLOR' ). 														"Zeile färben
+*    LOOP AT go_salv->get_columns(  )->get(  ) ASSIGNING FIELD-SYMBOL(<c>).
 *      DATA(o_col2) = <c>-r_column.
 *      o_col2->set_alignment( if_salv_c_alignment=>centered ).
 *    ENDLOOP.
-*    o_salv->display(  ).
-*  CATCH cx_salv_msg cx_salv_data_error cx_salv_existing cx_salv_not_found INTO DATA(e_txt).
-*    WRITE: / e_txt->get_text(  ).
+*    go_salv->display(  ).
+*	WRITE: space.
+*  CATCH cx_salv_msg cx_salv_data_error cx_salv_existing cx_salv_not_found cx_salv_wrong_call INTO DATA(cx_error).
+*    MESSAGE ID '00' TYPE 'I' NUMBER 001 WITH |{ cx_error->get_text(  ) }|.
 *ENDTRY.
 **cld (cl_demo_output in Vollbilddarstellung)
 *cl_demo_output=>write_data( ${variable} ).

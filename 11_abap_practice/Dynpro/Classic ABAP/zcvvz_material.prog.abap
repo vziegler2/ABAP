@@ -1,9 +1,15 @@
 ****************************************************************
-*
-*   Ausstehend:
-*
-* - Popup für Dynpro 200 einstellen
-*
+* Jira..............: None
+* Description.......: MM search report
+* Functional Concept: Vikram Ziegler (Academic Work)
+* Technical Concept.: Vikram Ziegler (Academic Work)
+* Realized by.......: Vikram Ziegler (Academic Work)
+*---------------------------------------------------------------
+* Change History:
+*---------------------------------------------------------------
+* Realized by.......:
+* Date..............:
+* Where.............:
 ****************************************************************
 REPORT zcvvz_material.
 ****************************************************************
@@ -24,9 +30,9 @@ DATA: c_custom_container   TYPE REF TO cl_gui_custom_container,
       tab_display          TYPE TABLE OF zcvvz_st_00,
       tab_display2         TYPE TABLE OF zcvvz_st_01,
       tab_display3         TYPE TABLE OF zcvvz_st_02,
-      ok_code              LIKE sy-ucomm,
       lv_werks             TYPE marc-werks,
-      lv_lgort             TYPE mard-lgort.
+      lv_lgort             TYPE mard-lgort,
+      ls_draw TYPE zcvvz_st_01.
 
 SELECTION-SCREEN BEGIN OF BLOCK bl0 WITH FRAME TITLE TEXT-001.
   SELECT-OPTIONS: so_matnr FOR mara-matnr DEFAULT '201058610:K0654',
@@ -98,33 +104,11 @@ CLASS lcl_event_handle IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD handle_hotspot_click.
-    DATA: ls_draw TYPE zcvvz_st_01.
     READ TABLE tab_display2 INTO ls_draw INDEX e_row_id.
     lv_lgort = ls_draw-lgort.
 
-    IF c_custom_container2 IS INITIAL.
-      c_custom_container2 = NEW #( container_name = 'CCONTROL2' ).
-
-      alv_grid3 = NEW #( i_parent = c_custom_container2 ).
-
-      SELECT b~matnr,
-         a~charg,
-         a~laeda,
-         a~clabs,
-         a~cspem,
-         b~meins
-        FROM mchb AS a
-        JOIN mard AS c ON a~matnr = c~matnr AND a~werks = c~werks AND a~lgort = c~lgort
-        JOIN mara AS b ON a~matnr = b~matnr
-        WHERE b~matnr = @ls_draw-matnr
-        INTO TABLE @tab_display3.
-
-      alv_grid3->set_table_for_first_display( EXPORTING i_structure_name = 'ZCVVZ_ST_02'
-                                              CHANGING it_outtab = tab_display3 ).
-
-    ENDIF.
-
-    CALL SCREEN 200.
+    CALL SCREEN 200 STARTING AT 10 10
+                    ENDING AT 100 40.
   ENDMETHOD.
 
 ENDCLASS.
