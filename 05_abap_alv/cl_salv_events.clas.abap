@@ -1,6 +1,8 @@
 CLASS lcl_events DEFINITION.
 
   PUBLIC SECTION.
+    INTERFACES: if_alv_rm_grid_friend.    
+
     CLASS-METHODS: on_double_click
       FOR EVENT if_salv_events_actions_table~double_click
       OF cl_salv_events_table
