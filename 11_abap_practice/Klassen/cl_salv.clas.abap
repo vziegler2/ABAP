@@ -6,36 +6,50 @@ CLASS zcl_cvvz_salv DEFINITION
   PUBLIC SECTION.
     INTERFACES: if_alv_rm_grid_friend.
 
-    METHODS: constructor        IMPORTING io_salv           TYPE REF TO cl_salv_table
-                                          iv_list_header    TYPE char70
-                                          iv_sort_column    TYPE char30,
+    METHODS: constructor        IMPORTING io_salv        TYPE REF TO cl_salv_table
+                                          io_outtab      TYPE REF TO data
+                                          iv_tabletype   TYPE char30
+                                          iv_list_header TYPE char70 OPTIONAL
+                                          iv_sort_column TYPE char30 OPTIONAL,
              settings,
-             change_celltype    IMPORTING iv_columnname     TYPE char30
-                                          iv_celltype       TYPE salv_de_celltype,
-             color_column       IMPORTING iv_columnname     TYPE char30
-                                          iv_col            TYPE int4
-                                          iv_int            TYPE int1
-                                          iv_inv            TYPE int4,
-             add_toolbutton     IMPORTING iv_name           TYPE char70
-                                          iv_icon           LIKE icon_ws_plane
-                                          iv_text           TYPE string
-                                          iv_tooltip        TYPE string,
+             change_celltype    IMPORTING iv_columnname TYPE char30
+                                          iv_celltype   TYPE salv_de_celltype,
+             color_column       IMPORTING iv_columnname TYPE char30
+                                          iv_col        TYPE int4
+                                          iv_int        TYPE int1
+                                          iv_inv        TYPE int4,
+             add_toolbutton     IMPORTING iv_name    TYPE char70
+                                          iv_icon    LIKE icon_ws_plane
+                                          iv_text    TYPE string
+                                          iv_tooltip TYPE string,
              hide_column        IMPORTING lv_colnam         TYPE lvc_fname,
              hide_empty_columns IMPORTING it_tab            TYPE ANY TABLE,
              set_column_names   IMPORTING column_names_itab TYPE zvz_salv_set_column_names,
+             get_key_fields_of_ddic_table IMPORTING ddic_table_name TYPE string
+                                          RETURNING VALUE(lt_keyfields) TYPE stringtab,
+             edit_button_click  IMPORTING it_keyfields      TYPE stringtab,
+             save_button_click,
+             insert_button_click,
+             delete_button_click,
              display.
   PROTECTED SECTION.
   PRIVATE SECTION.
-    DATA: o_salv TYPE REF TO cl_salv_table,
-          o_outtab TYPE REF TO data,
-          mv_list_header TYPE char70,
-          mv_sort_column TYPE char30.
+    DATA: o_salv               TYPE REF TO cl_salv_table,
+          o_outtab             TYPE REF TO data,
+          o_col                TYPE REF TO cl_salv_column,
+          lo_structdescr_table TYPE REF TO cl_abap_structdescr,
+          mv_tabletype         TYPE char30,
+          mv_list_header       TYPE char70,
+          mv_sort_column       TYPE char30,
+          mv_edit_flag         TYPE flag VALUE abap_false.
 ENDCLASS.
 
 CLASS zcl_cvvz_salv IMPLEMENTATION.
 
   METHOD constructor.
     o_salv = io_salv.
+    o_outtab = io_outtab.
+    mv_tabletype = iv_tabletype.
     mv_list_header = iv_list_header.
     mv_sort_column = iv_sort_column.
     me->settings(  ).
@@ -44,11 +58,15 @@ CLASS zcl_cvvz_salv IMPLEMENTATION.
   METHOD settings.
     TRY.
         o_salv->get_functions( )->set_all( abap_true ).
-        o_salv->get_display_settings( )->set_list_header( mv_list_header ).
+        IF mv_list_header IS NOT INITIAL.
+          o_salv->get_display_settings( )->set_list_header( mv_list_header ).
+        ENDIF.
         o_salv->get_display_settings( )->set_striped_pattern( abap_true ).
         o_salv->get_selections( )->set_selection_mode( if_salv_c_selection_mode=>row_column ).
-        o_salv->get_sorts( )->add_sort( columnname = mv_sort_column
-                                        sequence   = if_salv_c_sort=>sort_up ).
+        IF mv_sort_column IS NOT INITIAL.
+          o_salv->get_sorts( )->add_sort( columnname = mv_sort_column
+                                          sequence   = if_salv_c_sort=>sort_up ).
+        ENDIF.
         o_salv->get_columns( )->set_optimize( abap_true ).
 
         LOOP AT o_salv->get_columns( )->get( ) ASSIGNING FIELD-SYMBOL(<c>).
@@ -68,10 +86,10 @@ CLASS zcl_cvvz_salv IMPLEMENTATION.
             o_col->set_cell_type( if_salv_c_cell_type=>hotspot ).
           WHEN 2.
             o_col->set_cell_type( if_salv_c_cell_type=>button ).
-          WHEN 1.
-            o_col->set_cell_type( if_salv_c_cell_type=>checkbox ).
           WHEN 3.
             o_col->set_cell_type( if_salv_c_cell_type=>dropdown ).
+          WHEN 1.
+            o_col->set_cell_type( if_salv_c_cell_type=>checkbox ).
           WHEN OTHERS.
         ENDCASE.
       CATCH cx_salv_not_found INTO DATA(cx_error).
@@ -151,9 +169,67 @@ CLASS zcl_cvvz_salv IMPLEMENTATION.
     ENDLOOP.
   ENDMETHOD.
 
+  METHOD get_key_fields_of_ddic_table.
+    DATA(lo_typedescr) = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_name( ddic_table_name ) ).
+    lo_structdescr_table ?= lo_typedescr.
+    DATA(lt_ddic_fields) = lo_structdescr_table->get_ddic_field_list(  ).
+
+    LOOP AT lt_ddic_fields INTO DATA(ls_ddic_field) WHERE keyflag = 'X'.
+      APPEND ls_ddic_field-fieldname TO lt_keyfields.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD edit_button_click.
+    TRY.
+        IF mv_edit_flag = abap_false.
+          LOOP AT o_salv->get_columns( )->get( ) ASSIGNING FIELD-SYMBOL(<c>).
+            IF line_exists( it_keyfields[ table_line = <c>-columnname ] ).
+              CONTINUE.
+            ELSE.
+              o_salv->extended_grid_api( )->editable_restricted( )->set_attributes_for_columnname( columnname              = <c>-columnname
+                                                                                                   all_cells_input_enabled = abap_true ).
+              mv_edit_flag = abap_true.
+            ENDIF.
+          ENDLOOP.
+        ELSE.
+          LOOP AT o_salv->get_columns( )->get( ) ASSIGNING FIELD-SYMBOL(<d>).
+              o_salv->extended_grid_api( )->editable_restricted( )->set_attributes_for_columnname( columnname              = <d>-columnname
+                                                                                                   all_cells_input_enabled = abap_false ).
+              mv_edit_flag = abap_false.
+          ENDLOOP.
+        ENDIF.
+      CATCH cx_salv_not_found INTO DATA(cx_error).
+        MESSAGE i435(00) WITH |{ cx_error->get_text( ) }|.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD save_button_click.
+    ASSIGN o_outtab->* TO FIELD-SYMBOL(<lt_table_data>).
+    TRY.
+        o_salv->extended_grid_api( )->editable_restricted( )->validate_changed_data( ).
+        MODIFY zcvvz_bib FROM TABLE @<lt_table_data>.
+        LOOP AT o_salv->get_columns( )->get( ) ASSIGNING FIELD-SYMBOL(<d>).
+            o_salv->extended_grid_api( )->editable_restricted( )->set_attributes_for_columnname( columnname              = <d>-columnname
+                                                                                                 all_cells_input_enabled = abap_false ).
+            mv_edit_flag = abap_false.
+        ENDLOOP.
+        o_salv->refresh( ).
+      CATCH cx_salv_not_found INTO DATA(cx_error).
+        MESSAGE i435(00) WITH |{ cx_error->get_text( ) }|.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD insert_button_click.
+
+  ENDMETHOD.
+
+  METHOD delete_button_click.
+
+  ENDMETHOD.
+
   METHOD display.
-        o_salv->display( ).
-        WRITE: space.
+    o_salv->display( ).
+    WRITE: space.
   ENDMETHOD.
 
 ENDCLASS.

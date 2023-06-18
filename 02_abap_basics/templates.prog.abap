@@ -1,7 +1,7 @@
 REPORT zvzp_templates.
 **ifs (IF mit sy-subrc)
 *IF sy-subrc <> 0.
-*    MESSAGE ID '00' TYPE 'I' NUMBER 001 WITH 'Objekt ist gesperrt'.
+*    MESSAGE i435(00) WITH |${message_text}|.
 *    RETURN.
 *ENDIF.${cursor}
 **wwri (WRITE)
@@ -60,7 +60,7 @@ REPORT zvzp_templates.
 **                                             tooltip  = |Daten exportieren|
 **                                             position = if_salv_c_function_position=>right_of_salv_functions ).
 **    SET HANDLER lcl_events=>on_toolbar_click FOR go_salv->get_event( ).
-*    go_salv->get_display_settings(  )->set_list_header( '${header}' ).
+*    go_salv->get_display_settings(  )->set_list_header( |${header} ({ lines( ${table_name} ) })| ).
 *    go_salv->get_display_settings(  )->set_striped_pattern( abap_true ).
 *    go_salv->get_selections(  )->set_selection_mode( if_salv_c_selection_mode=>row_column ).
 *    go_salv->get_sorts(  )->add_sort( columnname = '${sort_column}' sequence = if_salv_c_sort=>sort_up ).
@@ -75,7 +75,7 @@ REPORT zvzp_templates.
 *    go_salv->display(  ).
 *    WRITE: space.
 *  CATCH cx_salv_msg cx_salv_data_error cx_salv_existing cx_salv_not_found cx_salv_wrong_call INTO DATA(cx_error).
-*    MESSAGE ID '00' TYPE 'I' NUMBER 001 WITH |{ cx_error->get_text(  ) }|.
+*    MESSAGE i435(00) WITH |{ cx_error->get_text(  ) }|.
 *ENDTRY.
 **cld (cl_demo_output in Vollbilddarstellung)
 *cl_demo_output=>write_data( ${variable} ).
