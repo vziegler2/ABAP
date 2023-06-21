@@ -152,3 +152,10 @@ REPORT zvzp_templates.
 * Date..............:
 * Where.............:
 ****************************************************************
+**one (ZZONE_KOPF)
+** Dieses Programm muss bis spätestens am 19.06.2024 gelöscht werden.
+*INITIALIZATION.
+*  CHECK sy-datum GT '20240619'.
+*  MESSAGE e065(zs).
+*START-OF-SELECTION.
+*  MESSAGE i068(zs) WITH '19.06.2024'.

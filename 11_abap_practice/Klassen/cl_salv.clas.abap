@@ -6,6 +6,8 @@ CLASS zcl_cvvz_salv DEFINITION
   PUBLIC SECTION.
     INTERFACES: if_alv_rm_grid_friend.
 
+    DATA: mv_edit_flag TYPE flag VALUE abap_false.
+
     METHODS: constructor        IMPORTING io_salv        TYPE REF TO cl_salv_table
                                           io_outtab      TYPE REF TO data
                                           iv_tabletype   TYPE char30
@@ -29,8 +31,6 @@ CLASS zcl_cvvz_salv DEFINITION
                                           RETURNING VALUE(lt_keyfields) TYPE stringtab,
              edit_button_click  IMPORTING it_keyfields      TYPE stringtab,
              save_button_click,
-             insert_button_click,
-             delete_button_click,
              display.
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -40,8 +40,7 @@ CLASS zcl_cvvz_salv DEFINITION
           lo_structdescr_table TYPE REF TO cl_abap_structdescr,
           mv_tabletype         TYPE char30,
           mv_list_header       TYPE char70,
-          mv_sort_column       TYPE char30,
-          mv_edit_flag         TYPE flag VALUE abap_false.
+          mv_sort_column       TYPE char30.
 ENDCLASS.
 
 CLASS zcl_cvvz_salv IMPLEMENTATION.
@@ -217,14 +216,6 @@ CLASS zcl_cvvz_salv IMPLEMENTATION.
       CATCH cx_salv_not_found INTO DATA(cx_error).
         MESSAGE i435(00) WITH |{ cx_error->get_text( ) }|.
     ENDTRY.
-  ENDMETHOD.
-
-  METHOD insert_button_click.
-
-  ENDMETHOD.
-
-  METHOD delete_button_click.
-
   ENDMETHOD.
 
   METHOD display.

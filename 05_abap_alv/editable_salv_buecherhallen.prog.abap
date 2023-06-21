@@ -1,10 +1,3 @@
-****************************************************************
-*
-*   Ausstehend:
-*
-*   - Filterfunktion
-*
-****************************************************************
 REPORT zcvvz_001.
 
 CLASS lcl_events DEFINITION.
@@ -25,7 +18,10 @@ START-OF-SELECTION.
                                                              ( spalte = 'LOCATION' name = 'Location' )
                                                              ( spalte = 'OPEN_HOURS' name = 'Opening hours' ) ).
 
-  SELECT *
+  SELECT mandt,
+         id,
+         location,
+         open_hours
   FROM zcvvz_bib
   INTO TABLE @DATA(gt_outtab).
 
@@ -96,14 +92,12 @@ CLASS lcl_events IMPLEMENTATION.
 
         APPEND VALUE zcvvz_bib( id = lv_id location = '' ) TO gt_outtab.
         SORT gt_outtab BY id.
-        TRY.
-            go_salv->extended_grid_api( )->editable_restricted( )->set_attributes_for_columnname( columnname              = |LOCATION|
-                                                                                                  all_cells_input_enabled = abap_true ).
-            gv_edit_flag = abap_true.
-            go_salv->refresh( ).
-          CATCH cx_salv_not_found INTO DATA(cx_error3).
-            MESSAGE ID '00' TYPE 'I' NUMBER 001 WITH |{ cx_error->get_text( ) }|.
-        ENDTRY.
+
+        IF go_fts->mv_edit_flag = abap_false.
+          go_fts->edit_button_click( it_keyfields = gt_keyfields ).
+        ELSE.
+          go_salv->refresh( ).
+        ENDIF.
       WHEN 'DELETE'.
         DATA(lt_sel_rows) = go_salv->get_selections( )->get_selected_rows( ).
         DATA lt_del_rows TYPE TABLE OF zcvvz_bib.
