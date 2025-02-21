@@ -5,7 +5,8 @@
                     typeNamePlural: 'Brands',
                     title: { type: #STANDARD,
                              value: 'brand_id' }
-                  }
+                  },
+      presentationVariant: [{sortOrder: [{ by: 'brand_id', direction: #DESC }]}]
     }
 define root view entity ZC_MM_BRANDS_SAP
   as projection on ZI_MM_BRANDS_SAP
@@ -44,6 +45,7 @@ define root view entity ZC_MM_BRANDS_SAP
       brand_descr,
       @UI: { lineItem: [ { position: 40, importance: #HIGH, label: 'Language' } ],
              identification:[ { position: 40, label: 'Language' } ] }
+
       language,
       @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'WWS Number' } ],
              identification:[ { position: 20, label: 'WWS Number' } ],
