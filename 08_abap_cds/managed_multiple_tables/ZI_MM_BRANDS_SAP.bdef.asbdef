@@ -7,6 +7,8 @@ lock master
 authorization master ( instance )
 //etag master <field_name>
 {
+  field ( readonly ) brand_descr, language, zz_c_number, zz_c_brand;
+  field ( readonly : update ) brand_id;
   create;
   update;
   delete;
@@ -20,6 +22,7 @@ lock dependent by ZI_MM_BRANDS_SAP
 authorization dependent by ZI_MM_BRANDS_SAP
 //etag master <field_name>
 {
+  field ( readonly : update ) zz_c_number;
   update;
   delete;
   field ( readonly ) brand_id;
@@ -32,6 +35,7 @@ lock dependent by ZI_MM_BRANDS_SAP
 authorization dependent by ZI_MM_BRANDS_SAP
 //etag master <field_name>
 {
+  field ( readonly : update ) language;
   update;
   delete;
   field ( readonly ) brand_id;
