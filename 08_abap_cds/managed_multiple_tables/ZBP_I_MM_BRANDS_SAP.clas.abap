@@ -1,0 +1,5 @@
+CLASS zbp_i_mm_brands_sap DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zi_mm_brands_sap.
+ENDCLASS.
+
+CLASS zbp_i_mm_brands_sap IMPLEMENTATION.
+ENDCLASS.

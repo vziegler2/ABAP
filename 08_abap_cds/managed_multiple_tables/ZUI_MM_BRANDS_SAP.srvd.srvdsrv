@@ -1,0 +1,6 @@
+@EndUserText.label: 'Service'
+define service ZUI_MM_BRANDS_SAP {
+  expose ZC_MM_BRANDS_SAP;
+  expose ZC_MM_BRANDS_TEXT;
+  expose ZC_MM_BRANDS_OLD;
+}

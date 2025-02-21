@@ -1,0 +1,45 @@
+unmanaged implementation in class zbp_r_mm_brands unique;
+//strict ( 2 );
+
+define behavior for ZR_MM_BRANDS //alias <alias_name>
+//late numbering
+lock master
+//authorization master ( instance )
+etag master last_changed
+{
+  field( readonly : update ) brand_id;
+  create;
+  update;
+  delete;
+  association _Texts { create ( features : instance ); }
+  association _WWS { create ( features : instance ); }
+  mapping for wrf_brands corresponding;
+}
+
+define behavior for ZI_MM_BRANDS_T //alias <alias_name>
+implementation in class zbp_i_mm_brands_t unique
+//late numbering
+lock dependent by ZR_MM_BRANDS
+//authorization dependent by ZI_MM_BRANDS_T
+etag dependent by ZR_MM_BRANDS
+{
+  update;
+  delete;
+  field ( readonly ) brand_id;
+  association ZR_MM_BRANDS;
+  mapping for wrf_brands_t corresponding;
+}
+
+define behavior for ZI_MM_BRANDS_WWS //alias <alias_name>
+implementation in class zbp_i_mm_brands_wws unique
+//late numbering
+lock dependent by ZR_MM_BRANDS
+//authorization dependent by ZI_MM_BRANDS_T
+etag dependent by ZR_MM_BRANDS
+{
+  update;
+  delete;
+  field ( readonly ) brand_id;
+  association ZR_MM_BRANDS;
+  mapping for zmm_cit_brand corresponding;
+}

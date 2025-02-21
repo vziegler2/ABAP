@@ -1,0 +1,42 @@
+unmanaged implementation in class zbp_i_mm_brands_sap unique;
+strict( 2 );
+
+define behavior for ZI_MM_BRANDS_SAP //alias <alias_name>
+//late numbering
+lock master
+authorization master ( instance )
+//etag master <field_name>
+{
+  create;
+  update;
+  delete;
+  association _WWS { create; }
+  association _Text { create; }
+  mapping for wrf_brands corresponding;
+}
+
+define behavior for ZI_MM_BRANDS_OLD //alias <alias_name>
+//late numbering
+lock dependent by ZI_MM_BRANDS_SAP
+authorization dependent by ZI_MM_BRANDS_SAP
+//etag master <field_name>
+{
+  update;
+  delete;
+  field ( readonly ) brand_id;
+  association ZI_MM_BRANDS_SAP;
+  mapping for wrf_brands_t corresponding;
+}
+
+define behavior for ZI_MM_BRANDS_TEXT //alias <alias_name>
+//late numbering
+lock dependent by ZI_MM_BRANDS_SAP
+authorization dependent by ZI_MM_BRANDS_SAP
+//etag master <field_name>
+{
+  update;
+  delete;
+  field ( readonly ) brand_id;
+  association ZI_MM_BRANDS_SAP;
+  mapping for zmm_cit_brand corresponding;
+}

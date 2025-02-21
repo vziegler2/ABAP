@@ -1,0 +1,28 @@
+projection;
+strict ( 2 );
+
+define behavior for ZC_MM_BRANDS_SAP //alias <alias_name>
+{
+  use create;
+  use update;
+  use delete;
+
+  use association _WWS { create; }
+  use association _Text { create; }
+}
+
+define behavior for ZC_MM_BRANDS_OLD //alias <alias_name>
+{
+  use update;
+  use delete;
+
+  use association ZI_MM_BRANDS_SAP;
+}
+
+define behavior for ZC_MM_BRANDS_TEXT //alias <alias_name>
+{
+  use update;
+  use delete;
+
+  use association ZI_MM_BRANDS_SAP;
+}
