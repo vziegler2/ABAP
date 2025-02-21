@@ -17,13 +17,11 @@ define view entity ZC_MM_BRANDS_OLD
                     type: #IDENTIFICATION_REFERENCE
                   }]
       @UI: { lineItem: [ { position: 10, importance: #HIGH, label: 'Number' } ],
-             identification:[ { position: 10, label: 'Number' } ],
-             selectionField: [ { position: 10 } ] }
+             identification:[ { position: 10, label: 'Number' } ] }
   key zz_c_number,
       brand_id,
       @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'Own Brand' } ],
-             identification:[ { position: 20, label: 'Own Brand' } ],
-             selectionField: [ { position: 20 } ] }
+             identification:[ { position: 20, label: 'Own Brand' } ] }
       zz_c_brand,
       /* Associations */
       ZI_MM_BRANDS_SAP : redirected to parent ZC_MM_BRANDS_SAP
