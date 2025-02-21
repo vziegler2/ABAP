@@ -18,14 +18,11 @@ define view entity ZC_MM_BRANDS_TEXT
                   }]
   key brand_id,
       @UI: { lineItem: [ { position: 10, importance: #HIGH, label: 'Language' } ],
-             identification:[ { position: 10, label: 'Language' } ],
-             selectionField: [ { position: 10 } ] }
-      @Consumption.valueHelpDefinition: [{ entity: { name: 'ZI_MM_SPRAS_VH', element: 'laiso'},
-                                           distinctValues: true }]
+             identification:[ { position: 10, label: 'Language' } ] }
+      @Consumption.valueHelpDefinition: [{ entity: { name: 'ZI_MM_SPRAS_VH', element: 'laiso'} } ]
   key language,
       @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'Text' } ],
-             identification:[ { position: 20, label: 'Text' } ],
-             selectionField: [ { position: 20 } ] }
+             identification:[ { position: 20, label: 'Text' } ] }
       brand_descr,
       /* Associations */
       ZI_MM_BRANDS_SAP : redirected to parent ZC_MM_BRANDS_SAP
