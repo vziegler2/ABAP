@@ -35,8 +35,7 @@ define root view entity ZC_MM_BRANDS_SAP
              selectionField: [ { position: 10 } ] }
   key brand_id,
       @UI: { lineItem: [ { position: 50, importance: #HIGH, label: 'Type' } ],
-             identification:[ { position: 50, label: 'Type' } ],
-             selectionField: [ { position: 50 } ] }
+             identification:[ { position: 50, label: 'Type' } ] }
       @EndUserText.quickInfo: '2 - Manufacturer Brand, 1 - Own Brand'
       brand_type,
       @UI: { lineItem: [ { position: 30, importance: #HIGH, label: 'Description' } ],
@@ -44,8 +43,7 @@ define root view entity ZC_MM_BRANDS_SAP
              selectionField: [ { position: 30 } ] }
       brand_descr,
       @UI: { lineItem: [ { position: 40, importance: #HIGH, label: 'Language' } ],
-             identification:[ { position: 40, label: 'Language' } ],
-             selectionField: [ { position: 40 } ] }
+             identification:[ { position: 40, label: 'Language' } ] }
       language,
       @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'WWS Number' } ],
              identification:[ { position: 20, label: 'WWS Number' } ],
