@@ -45,7 +45,7 @@ define root view entity ZC_MM_BRANDS_SAP
       brand_descr,
       @UI: { lineItem: [ { position: 40, importance: #HIGH, label: 'Language' } ],
              identification:[ { position: 40, label: 'Language' } ] }
-
+      @Consumption.filter.defaultValue: 'EN'
       language,
       @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'WWS Number' } ],
              identification:[ { position: 20, label: 'WWS Number' } ],
