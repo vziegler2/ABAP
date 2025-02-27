@@ -1,0 +1,23 @@
+@Metadata.layer: #CORE
+@UI:{ headerInfo: { typeName: 'Data',
+                    typeNamePlural: 'Data',
+                    title: { type: #STANDARD,
+                             value: 'zz_c_number' }
+                  }
+    }
+annotate entity ZC_MM_BRANDS_OLD with
+{
+  @UI.facet: [{ id: 'WWS',
+                purpose: #STANDARD,
+                position: 20,
+                label: 'WWS',
+                type: #IDENTIFICATION_REFERENCE
+              }]
+  @UI: { lineItem: [ { position: 10, importance: #HIGH, label: 'Number' } ],
+         identification:[ { position: 10, label: 'Number' } ] }
+  zz_c_number;
+  @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'Private Label' } ],
+         identification:[ { position: 20, label: 'Private Label' } ] }
+  zz_c_brand;
+
+}

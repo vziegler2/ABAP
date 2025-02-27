@@ -1,0 +1,62 @@
+@Metadata.layer: #CORE
+@UI:{ headerInfo: { typeName: 'Brand',
+                    typeNamePlural: 'Brands',
+                    title: { type: #STANDARD,
+                             value: 'brand_id' }
+                  },
+      presentationVariant: [{sortOrder: [{ by: 'brand_id', direction: #DESC }]}]
+    }
+annotate entity ZC_MM_BRANDS_SAP with
+{
+  @UI.facet: [{ id: 'Brand',
+                purpose: #STANDARD,
+                position: 10,
+                label: 'Brands',
+                type: #IDENTIFICATION_REFERENCE
+              },
+              { id: 'Description',
+                purpose: #STANDARD,
+                position: 20,
+                label: 'Descriptions',
+                type: #LINEITEM_REFERENCE,
+                targetElement: '_Text'
+              },
+              { id: 'WWS',
+                purpose: #STANDARD,
+                position: 30,
+                label: 'WWS',
+                type: #LINEITEM_REFERENCE,
+                targetElement: '_WWS'
+              }]
+  @UI: { lineItem: [ { position: 10, importance: #HIGH, label: 'SAP ID' } ],
+         identification:[ { position: 10, label: 'SAP ID' } ],
+         selectionField: [ { position: 10 } ] }
+  @EndUserText: { label: 'SAP ID', quickInfo: 'Table WRF_BRANDS' }
+  brand_id;
+  @UI: { lineItem: [ { position: 50, importance: #HIGH, label: 'Type' } ],
+         identification:[ { position: 50, label: 'Type' } ] }
+  @Consumption.valueHelpDefinition: [{ entity: { name: 'ZI_MM_TYPEVH', element: 'domvalue_l'}, useForValidation: true }]
+  @EndUserText: { label: 'Type', quickInfo: '2 - Manufacturer Brand, 1 - Private Label' }
+  brand_type;
+  @UI: { lineItem: [ { position: 30, importance: #HIGH, label: 'Description' } ],
+         identification:[ { position: 30, label: 'Description' } ],
+         selectionField: [ { position: 30 } ] }
+  @EndUserText: { label: 'Description', quickInfo: 'Table WRF_BRANDS_T' }
+  brand_descr;
+  @UI: { lineItem: [ { position: 40, importance: #HIGH, label: 'Language' } ],
+         identification:[ { position: 40, label: 'Language' } ] }
+  @Consumption.filter.defaultValue: 'EN'
+  @EndUserText: { label: 'Language', quickInfo: 'Table SPRAS' }
+  language;
+  @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'WWS Number' } ],
+         identification:[ { position: 20, label: 'WWS Number' } ],
+         selectionField: [ { position: 20 } ] }
+  @EndUserText: { label: 'WWS Number', quickInfo: 'Table ZMM_CIT_BRAND' }
+  zz_c_number;
+  @UI: { lineItem: [ { position: 60, importance: #HIGH, label: 'Private Label' } ],
+         identification:[ { position: 60, label: 'Private Label' } ],
+         selectionField: [ { position: 60 } ] }
+  @EndUserText: { label: 'Private Label', quickInfo: 'Table ZMM_CIT_BRAND' }
+  zz_c_brand;
+
+}
