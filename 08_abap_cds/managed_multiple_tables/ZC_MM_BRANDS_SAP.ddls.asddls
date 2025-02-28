@@ -5,7 +5,6 @@
 define root view entity ZC_MM_BRANDS_SAP
   as projection on ZI_MM_BRANDS_SAP
 {
-
   key brand_id,
       brand_type,
       brand_descr,
@@ -14,5 +13,5 @@ define root view entity ZC_MM_BRANDS_SAP
       zz_c_brand,
       /* Associations */
       _Text : redirected to composition child ZC_MM_BRANDS_TEXT,
-      _WWS  : redirected to composition child ZC_MM_BRANDS_OLD
+      _WWS  : redirected to composition child ZC_MM_BRANDS_WWS
 }

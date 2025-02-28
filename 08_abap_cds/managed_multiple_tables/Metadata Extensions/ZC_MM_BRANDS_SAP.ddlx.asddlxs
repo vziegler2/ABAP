@@ -1,6 +1,6 @@
 @Metadata.layer: #CORE
-@UI:{ headerInfo: { typeName: 'Brand',
-                    typeNamePlural: 'Brands',
+@UI:{ headerInfo: { typeName: 'Marke',
+                    typeNamePlural: 'Marken',
                     title: { type: #STANDARD,
                              value: 'brand_id' }
                   },
@@ -11,13 +11,13 @@ annotate entity ZC_MM_BRANDS_SAP with
   @UI.facet: [{ id: 'Brand',
                 purpose: #STANDARD,
                 position: 10,
-                label: 'Brands',
+                label: 'Marken',
                 type: #IDENTIFICATION_REFERENCE
               },
               { id: 'Description',
                 purpose: #STANDARD,
                 position: 20,
-                label: 'Descriptions',
+                label: 'Beschreibungen',
                 type: #LINEITEM_REFERENCE,
                 targetElement: '_Text'
               },
@@ -31,32 +31,32 @@ annotate entity ZC_MM_BRANDS_SAP with
   @UI: { lineItem: [ { position: 10, importance: #HIGH, label: 'SAP ID' } ],
          identification:[ { position: 10, label: 'SAP ID' } ],
          selectionField: [ { position: 10 } ] }
-  @EndUserText: { label: 'SAP ID', quickInfo: 'Table WRF_BRANDS' }
+  @EndUserText: { label: 'SAP ID', quickInfo: 'Tabelle WRF_BRANDS_T' }
   brand_id;
-  @UI: { lineItem: [ { position: 50, importance: #HIGH, label: 'Type' } ],
-         identification:[ { position: 50, label: 'Type' } ] }
+  @UI: { lineItem: [ { position: 50, importance: #HIGH, label: 'Typ' } ],
+         identification:[ { position: 50, label: 'Typ' } ] }
   @Consumption.valueHelpDefinition: [{ entity: { name: 'ZI_MM_TYPEVH', element: 'domvalue_l'}, useForValidation: true }]
-  @EndUserText: { label: 'Type', quickInfo: '2 - Manufacturer Brand, 1 - Private Label' }
+  @EndUserText: { label: 'Typ', quickInfo: '2 - Herstellermarke, 1 - Eigenmarke' }
   brand_type;
-  @UI: { lineItem: [ { position: 30, importance: #HIGH, label: 'Description' } ],
-         identification:[ { position: 30, label: 'Description' } ],
+  @UI: { lineItem: [ { position: 30, importance: #HIGH, label: 'Beschreibung' } ],
+         identification:[ { position: 30, label: 'Beschreibung' } ],
          selectionField: [ { position: 30 } ] }
-  @EndUserText: { label: 'Description', quickInfo: 'Table WRF_BRANDS_T' }
+  @EndUserText: { label: 'Beschreibung', quickInfo: 'Tabelle WRF_BRANDS_T' }
   brand_descr;
-  @UI: { lineItem: [ { position: 40, importance: #HIGH, label: 'Language' } ],
-         identification:[ { position: 40, label: 'Language' } ] }
+  @UI: { lineItem: [ { position: 40, importance: #HIGH, label: 'Sprache' } ],
+         identification:[ { position: 40, label: 'Sprache' } ] }
   @Consumption.filter.defaultValue: 'EN'
-  @EndUserText: { label: 'Language', quickInfo: 'Table SPRAS' }
+  @EndUserText: { label: 'Sprache', quickInfo: 'Tabelle SPRAS' }
   language;
-  @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'WWS Number' } ],
-         identification:[ { position: 20, label: 'WWS Number' } ],
+  @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'WWS Nummer' } ],
+         identification:[ { position: 20, label: 'WWS Nummer' } ],
          selectionField: [ { position: 20 } ] }
-  @EndUserText: { label: 'WWS Number', quickInfo: 'Table ZMM_CIT_BRAND' }
+  @EndUserText: { label: 'WWS Nummer', quickInfo: 'Tabelle ZMM_CIT_BRAND' }
   zz_c_number;
-  @UI: { lineItem: [ { position: 60, importance: #HIGH, label: 'Private Label' } ],
-         identification:[ { position: 60, label: 'Private Label' } ],
+  @UI: { lineItem: [ { position: 60, importance: #HIGH, label: 'Eigenmarke' } ],
+         identification:[ { position: 60, label: 'Eigenmarke' } ],
          selectionField: [ { position: 60 } ] }
-  @EndUserText: { label: 'Private Label', quickInfo: 'Table ZMM_CIT_BRAND' }
+  @EndUserText: { label: 'Eigenmarke', quickInfo: 'Tabelle ZMM_CIT_BRAND' }
   zz_c_brand;
 
 }

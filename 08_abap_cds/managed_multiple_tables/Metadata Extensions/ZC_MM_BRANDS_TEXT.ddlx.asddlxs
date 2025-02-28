@@ -1,6 +1,6 @@
 @Metadata.layer: #CORE
-@UI:{ headerInfo: { typeName: 'Data',
-                    typeNamePlural: 'Data',
+@UI:{ headerInfo: { typeName: 'Daten',
+                    typeNamePlural: 'Daten',
                     title: { type: #STANDARD,
                              value: 'brand_id' }
                   }
@@ -10,16 +10,16 @@ annotate entity ZC_MM_BRANDS_TEXT with
   @UI.facet: [{ id: 'Texts',
                 purpose: #STANDARD,
                 position: 10,
-                label: 'Texts',
+                label: 'Texte',
                 type: #IDENTIFICATION_REFERENCE
               }]
   brand_id;
-  @UI: { lineItem: [ { position: 10, importance: #HIGH, label: 'Language' } ],
-         identification:[ { position: 10, label: 'Language' } ] }
+  @UI: { lineItem: [ { position: 10, importance: #HIGH, label: 'Sprache' } ],
+         identification:[ { position: 10, label: 'Sprache' } ] }
   @Consumption.valueHelpDefinition: [{ entity: { name: 'ZI_MM_SPRASVH', element: 'laiso'} }]
   language;
-  @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'Text' } ],
-         identification:[ { position: 20, label: 'Text' } ] }
+  @UI: { lineItem: [ { position: 20, importance: #HIGH, label: 'Beschreibung' } ],
+         identification:[ { position: 20, label: 'Beschreibung' } ] }
   brand_descr;
 
 }

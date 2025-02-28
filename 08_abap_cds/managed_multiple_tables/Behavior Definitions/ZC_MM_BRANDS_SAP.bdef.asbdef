@@ -11,7 +11,7 @@ define behavior for ZC_MM_BRANDS_SAP //alias <alias_name>
   use association _Text { create; }
 }
 
-define behavior for ZC_MM_BRANDS_OLD //alias <alias_name>
+define behavior for ZC_MM_BRANDS_WWS //alias <alias_name>
 {
   use update;
   use delete;
