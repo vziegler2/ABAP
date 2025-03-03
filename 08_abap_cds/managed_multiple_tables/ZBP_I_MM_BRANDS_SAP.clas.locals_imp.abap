@@ -3,12 +3,28 @@ CLASS lhc_zi_mm_brands_sap DEFINITION INHERITING FROM cl_abap_behavior_handler.
 
     METHODS get_instance_authorizations FOR INSTANCE AUTHORIZATION
       IMPORTING keys REQUEST requested_authorizations FOR zi_mm_brands_sap RESULT result.
+    METHODS precheck_delete FOR PRECHECK
+      IMPORTING keys FOR DELETE zi_mm_brands_sap.
 
 ENDCLASS.
 
 CLASS lhc_zi_mm_brands_sap IMPLEMENTATION.
 
   METHOD get_instance_authorizations.
+  ENDMETHOD.
+
+  METHOD precheck_delete.
+    SELECT DISTINCT brand_id
+    FROM mara
+    WHERE brand_id <> '' AND lvorm = '' AND mstae <> '99'
+    INTO TABLE @DATA(lt_brand_id).
+
+    LOOP AT keys ASSIGNING FIELD-SYMBOL(<s_keys>).
+      IF line_exists( lt_brand_id[ brand_id = <s_keys>-brand_id ] ).
+        APPEND VALUE #(  %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
+                                                       text = |Brand { <s_keys>-brand_id } is used| ) ) TO reported-zi_mm_brands_sap.
+      ENDIF.
+    ENDLOOP.
   ENDMETHOD.
 
 ENDCLASS.
@@ -26,6 +42,7 @@ CLASS lsc_zi_mm_brands_sap IMPLEMENTATION.
 
   METHOD save_modified.
     DATA: lt_zi_mm_brands_sap TYPE STANDARD TABLE OF zi_mm_brands_sap,
+          lt_brand_id         TYPE STANDARD TABLE OF wrf_brand_id,
           ls_brand            TYPE wrf_brands,
           ls_brand_t          TYPE wrf_brands_t,
           ls_brand_w          TYPE zmm_cit_brand,
@@ -43,7 +60,7 @@ CLASS lsc_zi_mm_brands_sap IMPLEMENTATION.
 *Test SAP ID format----------------------------------------------------
       FIND REGEX '^[A-Z][0-9]{3}$' IN ls_brand-brand_id.
       IF sy-subrc <> 0.
-        APPEND VALUE #( text = 'Wrong SAP ID format' ) TO lt_msg.
+        APPEND VALUE #( key = 'w' text = 'Unusual SAP ID format' ) TO lt_msg.
       ENDIF.
 
 *Check private label---------------------------------------------------
@@ -53,7 +70,12 @@ CLASS lsc_zi_mm_brands_sap IMPLEMENTATION.
         APPEND VALUE #( text = 'Conflicting label type' ) TO lt_msg.
       ENDIF.
 
-      IF lt_msg IS INITIAL.
+      IF lt_msg IS INITIAL OR lt_msg[ 1 ]-key = 'w'.
+*Warning message-------------------------------------------------------
+        LOOP AT lt_msg ASSIGNING FIELD-SYMBOL(<s_msg_w>).
+          APPEND VALUE #(  %msg = new_message_with_text( severity = if_abap_behv_message=>severity-warning
+                                                         text = lt_msg[ sy-index ]-text ) ) TO reported-zi_mm_brands_sap.
+        ENDLOOP.
 *Update database-------------------------------------------------------
         INSERT wrf_brands FROM ls_brand.
 
@@ -101,11 +123,11 @@ CLASS lsc_zi_mm_brands_sap IMPLEMENTATION.
       ls_brand_w = CORRESPONDING #( lt_zi_mm_brands_sap[ 1 ] ).
 
 *Check private label---------------------------------------------------
-        IF ls_brand-brand_type = '1' AND ls_brand_w-zz_c_brand = ''.
-          APPEND VALUE #( text = 'Missing private label' ) TO lt_msg.
-        ELSEIF ls_brand-brand_type = '2' AND ls_brand_w-zz_c_brand <> ''.
-          APPEND VALUE #( text = 'Conflicting label type' ) TO lt_msg.
-        ENDIF.
+      IF ls_brand-brand_type = '1' AND ls_brand_w-zz_c_brand = ''.
+        APPEND VALUE #( text = 'Missing private label' ) TO lt_msg.
+      ELSEIF ls_brand-brand_type = '2' AND ls_brand_w-zz_c_brand <> ''.
+        APPEND VALUE #( text = 'Conflicting label type' ) TO lt_msg.
+      ENDIF.
 
       IF lt_msg IS INITIAL.
         UPDATE wrf_brands

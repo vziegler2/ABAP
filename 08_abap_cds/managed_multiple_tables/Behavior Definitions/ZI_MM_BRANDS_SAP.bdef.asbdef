@@ -1,26 +1,25 @@
 managed implementation in class zbp_i_mm_brands_sap unique;
 strict ( 2 );
 
-define behavior for ZI_MM_BRANDS_SAP //alias <alias_name>
-persistent table wrf_brands
+define behavior for ZI_MM_BRANDS_SAP
+with unmanaged save
 lock master
 authorization master ( instance )
-//etag master <field_name>
 {
-  field ( readonly ) brand_descr, language, zz_c_number, zz_c_brand;
-  field ( readonly : update ) brand_id;
+  field ( readonly ) language;
+  field ( readonly : update ) brand_id, zz_c_number;
+  field ( mandatory : create ) zz_c_number, brand_descr;
   create;
   update;
-  delete;
+  delete ( precheck );
   association _WWS { create; }
   association _Text { create; }
 }
 
-define behavior for ZI_MM_BRANDS_OLD //alias <alias_name>
+define behavior for ZI_MM_BRANDS_WWS
 persistent table zmm_cit_brand
 lock dependent by ZI_MM_BRANDS_SAP
 authorization dependent by ZI_MM_BRANDS_SAP
-//etag master <field_name>
 {
   field ( readonly : update ) zz_c_number;
   update;
@@ -29,11 +28,10 @@ authorization dependent by ZI_MM_BRANDS_SAP
   association ZI_MM_BRANDS_SAP;
 }
 
-define behavior for ZI_MM_BRANDS_TEXT //alias <alias_name>
+define behavior for ZI_MM_BRANDS_TEXT
 persistent table wrf_brands_t
 lock dependent by ZI_MM_BRANDS_SAP
 authorization dependent by ZI_MM_BRANDS_SAP
-//etag master <field_name>
 {
   field ( readonly : update ) language;
   update;
