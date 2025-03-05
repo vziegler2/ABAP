@@ -14,7 +14,6 @@ authorization master ( instance )
   delete ( precheck );
   association _WWS { create; }
   association _Text { create; }
-//  side effects { field brand_descr affects entity _Text; field zz_c_brand affects entity _WWS; }
 }
 
 define behavior for ZI_MM_BRANDS_WWS
