@@ -42,7 +42,9 @@ CLASS lsc_zi_mm_brands_sap IMPLEMENTATION.
 
   METHOD save_modified.
     DATA: lt_zi_mm_brands_sap TYPE STANDARD TABLE OF zi_mm_brands_sap,
+          lt_zi_mm_brands_wws TYPE STANDARD TABLE OF zi_mm_brands_wws,
           lt_brand_id         TYPE STANDARD TABLE OF wrf_brand_id,
+          ls_root             TYPE zi_mm_brands_sap,
           ls_brand            TYPE wrf_brands,
           ls_brand_t          TYPE wrf_brands_t,
           ls_brand_w          TYPE zmm_cit_brand,
@@ -96,39 +98,63 @@ CLASS lsc_zi_mm_brands_sap IMPLEMENTATION.
     ENDIF.
 *UPDATE----------------------------------------------------------------
     lt_zi_mm_brands_sap = CORRESPONDING #( update-zi_mm_brands_sap ).
+    lt_zi_mm_brands_wws = CORRESPONDING #( update-zi_mm_brands_wws ).
 
-    IF lt_zi_mm_brands_sap IS NOT INITIAL.
-      SELECT * FROM zi_mm_brands_sap FOR ALL ENTRIES IN @lt_zi_mm_brands_sap
-               WHERE brand_id = @lt_zi_mm_brands_sap-brand_id
-               INTO TABLE @lt_zi_mm_brands_sap.
+    IF lt_zi_mm_brands_sap IS NOT INITIAL OR
+       lt_zi_mm_brands_wws IS NOT INITIAL.
+*Root Entity updated---------------------------------------------------
+      IF lt_zi_mm_brands_sap IS NOT INITIAL.
+        SELECT * FROM zi_mm_brands_sap FOR ALL ENTRIES IN @lt_zi_mm_brands_sap
+                 WHERE brand_id = @lt_zi_mm_brands_sap-brand_id
+                 INTO TABLE @lt_zi_mm_brands_sap.
 
-      LOOP AT update-zi_mm_brands_sap ASSIGNING FIELD-SYMBOL(<s_new_data>).
-        ASSIGN lt_zi_mm_brands_sap[ brand_id = <s_new_data>-brand_id ] TO FIELD-SYMBOL(<s_old_data>).
+        LOOP AT update-zi_mm_brands_sap ASSIGNING FIELD-SYMBOL(<s_new_data>).
+          ASSIGN lt_zi_mm_brands_sap[ brand_id = <s_new_data>-brand_id ] TO FIELD-SYMBOL(<s_old_data>).
 
-        IF <s_new_data>-%control-brand_descr = if_abap_behv=>mk-on.
-          <s_old_data>-brand_descr = <s_new_data>-brand_descr.
-        ENDIF.
+          IF <s_new_data>-%control-brand_descr = if_abap_behv=>mk-on.
+            <s_old_data>-brand_descr = <s_new_data>-brand_descr.
+          ENDIF.
 
-        IF <s_new_data>-%control-brand_type = if_abap_behv=>mk-on.
-          <s_old_data>-brand_type = <s_new_data>-brand_type.
-        ENDIF.
+          IF <s_new_data>-%control-brand_type = if_abap_behv=>mk-on.
+            <s_old_data>-brand_type = <s_new_data>-brand_type.
+          ENDIF.
 
-        IF <s_new_data>-%control-zz_c_brand = if_abap_behv=>mk-on.
-          <s_old_data>-zz_c_brand = <s_new_data>-zz_c_brand.
-        ENDIF.
-      ENDLOOP.
+          IF <s_new_data>-%control-zz_c_brand = if_abap_behv=>mk-on.
+            <s_old_data>-zz_c_brand = <s_new_data>-zz_c_brand.
+          ENDIF.
+        ENDLOOP.
 
-      ls_brand = CORRESPONDING #( lt_zi_mm_brands_sap[ 1 ] ).
-      ls_brand_t = CORRESPONDING #( lt_zi_mm_brands_sap[ 1 ] ).
-      ls_brand_w = CORRESPONDING #( lt_zi_mm_brands_sap[ 1 ] ).
+        ls_brand = CORRESPONDING #( lt_zi_mm_brands_sap[ 1 ] ).
+        ls_brand_t = CORRESPONDING #( lt_zi_mm_brands_sap[ 1 ] ).
+        ls_brand_w = CORRESPONDING #( lt_zi_mm_brands_sap[ 1 ] ).
+*Child Entity updated--------------------------------------------------
+      ELSEIF lt_zi_mm_brands_wws IS NOT INITIAL.
+        SELECT * FROM zi_mm_brands_wws FOR ALL ENTRIES IN @lt_zi_mm_brands_wws
+                 WHERE zz_c_number = @lt_zi_mm_brands_wws-zz_c_number
+                 INTO TABLE @lt_zi_mm_brands_wws.
 
+        LOOP AT update-zi_mm_brands_wws ASSIGNING FIELD-SYMBOL(<s_new_data_wws>).
+          ASSIGN lt_zi_mm_brands_wws[ zz_c_number = <s_new_data_wws>-zz_c_number ] TO FIELD-SYMBOL(<s_old_data_wws>).
+
+          <s_old_data_wws>-zz_c_brand = <s_new_data_wws>-zz_c_brand.
+        ENDLOOP.
+
+        SELECT SINGLE *
+        FROM zi_mm_brands_sap
+        WHERE zz_c_number = @<s_old_data_wws>-zz_c_number
+        INTO @ls_root.
+
+        ls_brand = CORRESPONDING #( ls_root ).
+        ls_brand_t = CORRESPONDING #( ls_root ).
+        ls_brand_w = CORRESPONDING #( lt_zi_mm_brands_wws[ 1 ] ).
+      ENDIF.
 *Check private label---------------------------------------------------
       IF ls_brand-brand_type = '1' AND ls_brand_w-zz_c_brand = ''.
         APPEND VALUE #( text = 'Missing private label' ) TO lt_msg.
       ELSEIF ls_brand-brand_type = '2' AND ls_brand_w-zz_c_brand <> ''.
         APPEND VALUE #( text = 'Conflicting label type' ) TO lt_msg.
       ENDIF.
-
+*Update database-------------------------------------------------------
       IF lt_msg IS INITIAL.
         UPDATE wrf_brands
           SET brand_type = ls_brand-brand_type

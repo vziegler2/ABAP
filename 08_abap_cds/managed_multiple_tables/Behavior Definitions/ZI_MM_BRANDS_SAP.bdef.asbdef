@@ -8,15 +8,17 @@ authorization master ( instance )
 {
   field ( readonly ) language;
   field ( readonly : update ) brand_id, zz_c_number;
-  field ( mandatory : create ) zz_c_number, brand_descr;
+  field ( mandatory : create ) zz_c_number, brand_descr, brand_type;
   create;
   update;
   delete ( precheck );
   association _WWS { create; }
   association _Text { create; }
+//  side effects { field brand_descr affects entity _Text; field zz_c_brand affects entity _WWS; }
 }
 
 define behavior for ZI_MM_BRANDS_WWS
+with additional save
 persistent table zmm_cit_brand
 lock dependent by ZI_MM_BRANDS_SAP
 authorization dependent by ZI_MM_BRANDS_SAP
