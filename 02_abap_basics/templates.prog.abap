@@ -71,6 +71,20 @@ REPORT zvzp_templates.
 *    LOOP AT go_salv->get_columns(  )->get(  ) ASSIGNING FIELD-SYMBOL(<c>).
 *      DATA(o_col2) = <c>-r_column.
 *      o_col2->set_alignment( if_salv_c_alignment=>centered ).
+*      DATA(lv_short_text) = SWITCH char10( <c>-columnname
+*                                           WHEN 'EFFPR'      THEN 'Eff. Pr.' ).
+*
+*      DATA(lv_medium_text) = SWITCH char20( <c>-columnname
+*                                            WHEN 'EFFPR'      THEN 'Effective Price' ).
+*
+*      DATA(lv_long_text) = SWITCH char40( <c>-columnname
+*                                          WHEN 'EFFPR'      THEN 'Effective Price' ).
+*
+*      CHECK lv_short_text IS NOT INITIAL.
+*
+*      o_col2->set_short_text( lv_short_text ).
+*      o_col2->set_medium_text( lv_medium_text ).
+*      o_col2->set_long_text( lv_long_text ).
 *    ENDLOOP.
 *    go_salv->display(  ).
 *    WRITE: space.
