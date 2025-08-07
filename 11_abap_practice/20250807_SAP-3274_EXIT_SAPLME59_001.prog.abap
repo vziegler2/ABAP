@@ -5,20 +5,19 @@
 *  SELECTION-SCREEN END OF LINE.
 *SELECTION-SCREEN END OF BLOCK b_cust.
 
-" Definitionen für die Steuerungstabellen
+" Control table definition
 TYPES: BEGIN OF lty_control.
          INCLUDE STRUCTURE ebanx.
 TYPES:   raube TYPE mara-raube,
        END OF lty_control.
 
-TYPES: BEGIN OF lty_material_data,
-         matnr TYPE eban-matnr,
-         raube TYPE mara-raube,
-       END OF lty_material_data.
-
 DATA: lt_control       TYPE TABLE OF lty_control,
-      lt_material_data TYPE TABLE OF lty_material_data,
       ls_control_prev  TYPE lty_control.
+
+" Checks
+IF /cmt/cl_ca_cef_processor=>is_active( iv_extensionkey = 'ZMM_BANF_SPLIT_RAUBE' ) = abap_false.
+  RETURN.
+ENDIF.
 
 ASSIGN ('(RM06BB30)P_GRAUBE') TO FIELD-SYMBOL(<s_checkbox_raube>).
 
@@ -30,15 +29,15 @@ IF t_eban[] IS INITIAL OR <s_checkbox_raube> = ''.
   RETURN.
 ENDIF.
 
-" Raumbedingung abfragen
+" Query MARA-RAUBE
 SELECT matnr,
        raube
   FROM mara
-  INTO TABLE @lt_material_data
+  INTO TABLE @DATA(lt_material_data)
    FOR ALL ENTRIES IN @t_eban[]
  WHERE matnr = @t_eban-matnr.
 
-" Eigene Steuerungstabelle aufbauen
+" Build control table
 LOOP AT t_eban[] ASSIGNING FIELD-SYMBOL(<s_eban>).
   APPEND INITIAL LINE TO lt_control ASSIGNING FIELD-SYMBOL(<s_control>).
   <s_control>-banfn = <s_eban>-banfn.
@@ -59,12 +58,8 @@ ENDLOOP.
 UNASSIGN: <s_control>, <s_eban>.
 SORT lt_control BY raube.
 
-" Bei der ersten Zeile oder wenn sich die Raumbedingung ändert -> neue PO
+" At the first article and when RAUBE changes -> new PO
 LOOP AT lt_control ASSIGNING <s_control>.
-  IF <s_control>-raube = 'LE'. " LE = Leergut
-    <s_control>-raube = ls_control_prev.
-  ENDIF.
-
   IF sy-tabix = 1 OR <s_control>-raube <> ls_control_prev-raube.
     <s_control>-new_po   = 'X'.
     <s_control>-new_item = ''.
@@ -79,7 +74,7 @@ ENDLOOP.
 
 UNASSIGN <s_control>.
 
-" Die Originaltabellen in der neuen Reihenfolge aufbauen
+" Rebuild the original tables in the new order
 DATA(lt_eban_unsorted) = t_eban[].
 
 CLEAR: t_eban[], t_ebanx[].
