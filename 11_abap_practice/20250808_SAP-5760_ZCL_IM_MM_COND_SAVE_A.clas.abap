@@ -158,7 +158,8 @@ CLASS zcl_im_mm_cond_save_a IMPLEMENTATION.
 
     IF mt_add_materials IS NOT INITIAL.
       LOOP AT mt_add_materials ASSIGNING FIELD-SYMBOL(<s_add_materials>) WHERE matnr IS NOT INITIAL AND werks IS NOT INITIAL.
-        APPEND VALUE #( matnr = <s_add_materials>-matnr
+        APPEND VALUE #( BASE ms_cond_save_a
+                        matnr = <s_add_materials>-matnr
                         werks = <s_add_materials>-werks ) TO mt_cond_save_a.
       ENDLOOP.
 
